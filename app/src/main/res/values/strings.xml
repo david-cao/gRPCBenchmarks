@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">gRPC Benchmarks</string>
+    <string name="protobuf_spinner_prompt">Pick a proto to benchmark</string>
+
+    <string-array name="protobuf_benchmarks_array">
+        <item>Small request (~15bytes)</item>
+        <item>Address Book (from example ~300bytes)</item>
+        <item>Large newfeed-like protofile (~10kb)</item>
+        <item>Large generic protofile (~30kb)</item>
+        <item>Large string-dense generic protofile (~61kb)</item>
+        <item>Large string-sparse generic protofile (~2kb)</item>
+    </string-array>
+</resources>
