@@ -1,29 +1,20 @@
-gRPC Hello World Tutorial (Android Java)
+gRPC Benchmarks (Android Application)
 ========================
 
-PREREQUISITES
--------------
-- [Java gRPC](https://github.com/grpc/grpc-java)
-
-- [Android Tutorial](https://developer.android.com/training/basics/firstapp/index.html) if you're new to Android development
-
-- We only have Android gRPC client in this example. Please follow examples in other languages to build and run a gRPC server.
-
-INSTALL
+BUILD
 -------
-**1. Clone the gRPC Java git repo**
+**1. Clone the repo**
 ```sh
-$ git clone https://github.com/grpc/grpc-java
-$ cd grpc-java
+$ git clone https://github.com/david-cao/gRPCBenchmarksAndroid.git
+$ cd gRPCBenchmarksAndroid
 ```
 
-**2. Install gRPC Java (not necessary for released versions)**
+**2. Build with Gradle**
+If you have Gradle installed, simply run
 ```sh
-$ ./gradlew install -PskipCodegen=true
+$ gradle build
 ```
+or open in Android Studio and build from there.
 
-**3. Install the app**
-```sh
-$ cd examples/android
-$ ../../gradlew installDebug
-```
+**3. Running the application**
+From there, you should be able to run the app directly from studio or with `adb`
