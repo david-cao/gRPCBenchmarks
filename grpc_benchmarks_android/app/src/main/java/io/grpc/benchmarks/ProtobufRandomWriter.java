@@ -40,7 +40,7 @@ public class ProtobufRandomWriter {
 
     private static String randomAsciiString(Random r, int maxLen) {
         // add 1 since this is exclusive
-        int len = r.nextInt(maxLen + 1);
+        int len = r.nextInt(maxLen) + 1;
         return randomAsciiStringFixed(r, len);
     }
 
