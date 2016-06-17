@@ -24,11 +24,6 @@ import io.grpc.benchmarks.nano.Things;
  */
 public class ProtobufRandomWriter {
 
-    public static void main(String[] args) {
-        boolean fixed = true;
-        System.out.println(fixed ? randomAsciiStringFixed(new Random(), 60) : "no");
-    }
-
     private static String randomAsciiStringFixed(Random r, int len) {
         char s[] = new char[len];
         for (int i = 0; i < len; ++i) {
@@ -129,16 +124,16 @@ public class ProtobufRandomWriter {
 
     public static MessageNano randomProto3(int stringSize, boolean fixed) {
         Random r = new Random();
-        int numThings1 = r.nextInt(10) + 1;
+        int numThings1 = (fixed ? 5 : r.nextInt(10) + 1);
         Thing1[] things1 = new Thing1[numThings1];
         for (int i = 0; i < numThings1; ++i) {
             things1[i] = (Thing1) random3Helper(r, new Thing1(), stringSize, fixed);
-            int numThings2 = r.nextInt(10) + 1;
+            int numThings2 = (fixed ? 5 : r.nextInt(10) + 1);
             Thing1.Thing2[] things2 = new Thing1.Thing2[numThings2];
             for (int j = 0; j < numThings2; ++j) {
                 things2[j] = (Thing1.Thing2)
                         random3Helper(r, new Thing1.Thing2(), stringSize, fixed);
-                int numThings3 = r.nextInt(10) + 1;
+                int numThings3 = (fixed ? 5 : r.nextInt(10) + 1);
                 Thing1.Thing2.Thing3[] things3 = new Thing1.Thing2.Thing3[numThings3];
                 for (int k = 0; k < numThings3; ++k) {
                     things3[k] = (Thing1.Thing2.Thing3)

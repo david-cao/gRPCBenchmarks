@@ -1,7 +1,10 @@
-package io.grpc.benchmarks;
+package io.grpc.grpcbenchmarks;
 
-import android.app.Activity;
+import com.google.protobuf.MessageLite;
+
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
@@ -15,12 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.protobuf.nano.MessageNano;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProtobufBenchmarksActivity extends Activity implements AdapterView.OnItemSelectedListener {
+public class ProtobufBenchmarksActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     List<CardView> cardViews;
     List<Benchmark> benchmarks;
 
@@ -28,8 +29,8 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
     private Spinner mSpinner;
     private CheckBox mCheckBox;
 
-    private MessageNano sharedMessage;
-
+    private MessageLite sharedMessage;
+    private String sharedJson;
     private int selected = 0;
     private int tasksRunning = 0;
     private boolean useGzip = false;
@@ -58,7 +59,8 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
 
         for (final Benchmark b: benchmarks) {
             final CardView cv = (CardView) inflater.inflate(R.layout.protobuf_cv, l, false);
-            cv.setCardBackgroundColor(getResources().getColor(R.color.cardview_light_background));
+            cv.setCardBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+                    R.color.cardview_light_background));
             TextView tv = (TextView) cv.findViewById(R.id.protobuf_benchmark_title);
             TextView descrip = (TextView) cv.findViewById(R.id.protobuf_benchmark_description);
             ImageButton button = (ImageButton) cv.findViewById(R.id.protobuf_benchmark_start);
@@ -67,6 +69,7 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    System.out.println("start benchmark here");
                     startBenchmark(cv, b);
                 }
             });
@@ -78,11 +81,14 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
 
     private void initializeBenchmarks() {
         benchmarks = new ArrayList<>();
-        benchmarks.add(new Benchmark("Serialize to byte array", "description", 0));
-        benchmarks.add(new Benchmark("Serialize to CodedOutputByteBufferNano", "description", 1));
-        benchmarks.add(new Benchmark("Deserialize from byte array", "description", 2));
-        benchmarks.add(new Benchmark("JSON serialize to byte array", "description", 3));
-        benchmarks.add(new Benchmark("JSON deserialize from byte array", "description", 4));
+        benchmarks.add(new Benchmark("Serialize protobuf to byte array", "description", 0));
+        benchmarks.add(new Benchmark("Serialize protobuf to CodedOutputStream", "description", 1));
+        benchmarks.add(new Benchmark("Serialize protobuf to ByteArrayOutputStream", "description", 2));
+        benchmarks.add(new Benchmark("Deserialize protobuf from byte array", "description", 3));
+        benchmarks.add(new Benchmark("Deserialize protobuf from CodedInputStream", "description", 4));
+        benchmarks.add(new Benchmark("Deserialize protobuf from ByteArrayInputStream", "description", 5));
+        benchmarks.add(new Benchmark("Serialize JSON to byte array", "description", 6));
+        benchmarks.add(new Benchmark("Deserialize JSON from byte array", "description", 7));
     }
 
     public void beginAllBenchmarks(View v) {
@@ -92,24 +98,31 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
             switch (selected) {
                 case 0:
                     sharedMessage = ProtobufRandomWriter.randomProto0();
+                    sharedJson = ProtobufRandomWriter.protoToJsonString0(sharedMessage);
                     break;
                 case 1:
                     sharedMessage = ProtobufRandomWriter.randomProto1();
+                    sharedJson = ProtobufRandomWriter.protoToJsonString1(sharedMessage);
                     break;
                 case 2:
                     sharedMessage = ProtobufRandomWriter.randomProto2();
+                    sharedJson = ProtobufRandomWriter.protoToJsonString2(sharedMessage);
                     break;
                 case 3:
                     sharedMessage = ProtobufRandomWriter.randomProto3(60, false);
+                    sharedJson = ProtobufRandomWriter.protoToJsonString3(sharedMessage);
                     break;
                 case 4:
                     sharedMessage = ProtobufRandomWriter.randomProto3(60, true);
+                    sharedJson = ProtobufRandomWriter.protoToJsonString3(sharedMessage);
                     break;
                 case 5:
                     sharedMessage = ProtobufRandomWriter.randomProto3(10, true);
+                    sharedJson = ProtobufRandomWriter.protoToJsonString3(sharedMessage);
                     break;
                 default:
                     sharedMessage = ProtobufRandomWriter.randomProto0();
+                    sharedJson = ProtobufRandomWriter.protoToJsonString0(sharedMessage);
                     break;
             }
             mBenchmarkButton.setEnabled(false);
@@ -137,40 +150,6 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
         // Another interface callback
     }
 
-// ************************************************************************************************
-
-    private class Benchmark {
-        String title;
-        String description;
-        int methodNumber;
-
-        Benchmark(String title, String description, int methodNumber) {
-            this.title = title;
-            this.description = description;
-            this.methodNumber = methodNumber;
-        }
-
-        public BenchmarkResult run(MessageNano message, String jsonString, boolean useGzip)
-                throws Exception
-        {
-            switch (methodNumber) {
-                case 0:
-                    return ProtobufBenchmarker.serializeProtobufToByteArray(message);
-                case 1:
-                    return ProtobufBenchmarker.serializeProtobufToByteBuffer(message);
-                case 2:
-                    return ProtobufBenchmarker.deserializeProtobufFromByteArray(message);
-                case 3:
-                    return ProtobufBenchmarker.serializeJsonToByteArray(jsonString, useGzip);
-                case 4:
-                    return ProtobufBenchmarker.deserializeJsonfromByteArray(jsonString, useGzip);
-                default:
-                    return ProtobufBenchmarker.serializeProtobufToByteArray(message);
-            }
-        }
-    }
-
-    //TODO: Expand into multiple
     private class BenchmarkAsyncTask extends AsyncTask<Integer, Integer, BenchmarkResult> {
 
         CardView cv;
@@ -195,38 +174,44 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
         @Override
         protected BenchmarkResult doInBackground(Integer... inputs) {
             try {
-                MessageNano message;
+                MessageLite message;
                 String jsonString;
-
                 if (sharedMessage != null) {
                     System.out.println("Using shared message");
                     message = sharedMessage;
+                    jsonString = sharedJson;
                 } else {
                     switch (selected) {
                         case 0:
                             message = ProtobufRandomWriter.randomProto0();
+                            jsonString = ProtobufRandomWriter.protoToJsonString0(message);
                             break;
                         case 1:
                             message = ProtobufRandomWriter.randomProto1();
+                            jsonString = ProtobufRandomWriter.protoToJsonString1(message);
                             break;
                         case 2:
                             message = ProtobufRandomWriter.randomProto2();
+                            jsonString = ProtobufRandomWriter.protoToJsonString2(message);
                             break;
                         case 3:
                             message = ProtobufRandomWriter.randomProto3(60, false);
+                            jsonString = ProtobufRandomWriter.protoToJsonString3(message);
                             break;
                         case 4:
                             message = ProtobufRandomWriter.randomProto3(60, true);
+                            jsonString = ProtobufRandomWriter.protoToJsonString3(message);
                             break;
                         case 5:
                             message = ProtobufRandomWriter.randomProto3(10, true);
+                            jsonString = ProtobufRandomWriter.protoToJsonString3(message);
                             break;
                         default:
                             message = ProtobufRandomWriter.randomProto0();
+                            jsonString = ProtobufRandomWriter.protoToJsonString0(message);
                             break;
                     }
                 }
-                jsonString = ProtobufRandomWriter.protoToJsonString(message);
 
                 BenchmarkResult res = b.run(message, jsonString, useGzip);
 

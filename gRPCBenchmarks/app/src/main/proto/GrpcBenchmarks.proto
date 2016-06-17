@@ -1,0 +1,172 @@
+syntax = "proto3";
+package benchmarks;
+
+option java_multiple_files = true;
+option java_package = "io.grpc.benchmarks";
+option java_outer_classname = "GrpcBenchmarkProtos";
+
+// Small protos
+
+message Small1Request {
+  string name = 1;
+}
+
+message Small1Reply {
+  string message = 1;
+}
+
+// AddressBook protos
+
+service GrpcBenchmarkService {
+  rpc SendData(AddressBook) returns (AddressBook) {}
+}
+
+message Person {
+  string name = 1;
+  int32 id = 2;  // Unique ID number for this person.
+  string email = 3;
+
+  enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+  }
+
+  message PhoneNumber {
+    string number = 1;
+    PhoneType type = 2;
+  }
+
+  repeated PhoneNumber phones = 4;
+}
+
+message AddressBook {
+  repeated Person people = 1;
+}
+
+// Newsfeed protos
+
+message Post {
+    int32 owner_id = 1;
+    string content = 2;
+    repeated Reaction reactions = 3;
+    repeated Comment comments = 4;
+
+    message Reaction {
+        int32 owner_id = 1;
+        ReactionType type = 2;
+
+        enum ReactionType {
+            LIKE = 0;
+            LOVE = 1;
+            HAHA = 2;
+            SAD = 3;
+            ANGRY = 4;
+        }
+    }
+
+    message Comment {
+        int32 owner_id = 1;
+        string text = 2;
+    }
+}
+
+message Profile {
+    int32 id = 1;
+    string name = 2;
+    string about = 3;
+    bool gender = 4; // <- Not the best idea to use a boolean in practice, but this is an example!
+    repeated Post posts = 5;
+}
+
+message FriendsList {
+    repeated Profile profiles = 1;
+}
+
+// Large protos
+
+message Thing1 {
+    int32 int1 = 1;
+    int32 int2 = 2;
+    int32 int3 = 3;
+    float float1 = 4;
+    float float2 = 5;
+    float float3 = 6;
+    string string1 = 7;
+    string string2 = 8;
+    string string3 = 9;
+    bool bool1 = 11;
+    bool bool2 = 12;
+    bool bool3 = 13;
+    double double1 = 14;
+    double double2 = 15;
+    double double3 = 16;
+
+    repeated Thing2 things2 = 10;
+
+    message Thing2 {
+        int32 int1 = 1;
+        int32 int2 = 2;
+        int32 int3 = 3;
+        float float1 = 4;
+        float float2 = 5;
+        float float3 = 6;
+        string string1 = 7;
+        string string2 = 8;
+        string string3 = 9;
+        bool bool1 = 11;
+        bool bool2 = 12;
+        bool bool3 = 13;
+        double double1 = 14;
+        double double2 = 15;
+        double double3 = 16;
+        EnumType type = 17;
+        enum EnumType {
+            VALUE0 = 0;
+            VALUE1 = 1;
+            VALUE2 = 2;
+            VALUE3 = 3;
+            VALUE4 = 4;
+            VALUE5 = 5;
+        }
+
+        repeated Thing3 things3 = 10;
+
+        message Thing3 {
+            int32 int1 = 1;
+            int32 int2 = 2;
+            int32 int3 = 3;
+            float float1 = 4;
+            float float2 = 5;
+            float float3 = 6;
+            string string1 = 7;
+            string string2 = 8;
+            string string3 = 9;
+            bool bool1 = 11;
+            bool bool2 = 12;
+            bool bool3 = 13;
+            double double1 = 14;
+            double double2 = 15;
+            double double3 = 16;
+        }
+    }
+}
+
+message Things {
+    int32 int1 = 1;
+    int32 int2 = 2;
+    int32 int3 = 3;
+    float float1 = 4;
+    float float2 = 5;
+    float float3 = 6;
+    string string1 = 7;
+    string string2 = 8;
+    string string3 = 9;
+    bool bool1 = 11;
+    bool bool2 = 12;
+    bool bool3 = 13;
+    double double1 = 14;
+    double double2 = 15;
+    double double3 = 16;
+    repeated Thing1 things = 10;
+}

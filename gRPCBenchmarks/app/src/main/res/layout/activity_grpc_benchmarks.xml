@@ -1,9 +1,15 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              tools:context=".MainActivity"
-    android:keepScreenOn="true"
-              android:orientation="vertical" >
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="io.grpc.grpcbenchmarks.GrpcBenchmarksActivity"
+        android:keepScreenOn="true"
+        android:orientation="vertical" >
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -14,6 +20,7 @@
                 android:layout_weight="2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:text="192.168.42.245"
                 android:hint="Enter Host" />
         <EditText
                 android:id="@+id/port_edit_text"
@@ -21,6 +28,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
+                android:text="50051"
                 android:hint="Enter Port" />
     </LinearLayout>
 
@@ -39,11 +47,11 @@
             android:text="Send Grpc Request" />
 
     <Button
-        android:id="@+id/benchmark_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="beginBenchmark"
-        android:text="Start Benchmarking" />
+            android:id="@+id/benchmark_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="beginBenchmark"
+            android:text="Start Benchmarking" />
 
     <TextView
             android:layout_width="match_parent"

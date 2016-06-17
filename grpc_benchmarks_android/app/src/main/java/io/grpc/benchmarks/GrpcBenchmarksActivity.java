@@ -42,8 +42,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.protobufbenchmarker.nano.AddressBook;
-
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.examples.helloworld.nano.GreeterGrpc;
@@ -79,6 +77,9 @@ public class GrpcBenchmarksActivity extends AppCompatActivity {
         new GrpcTask().execute();
     }
 
+
+    //Connect to local host through USB tethering, use ip: 192.168.42.245
+
     public void beginBenchmark(View v) {
         mBenchmarkButton.setEnabled(false);
         new GrpcBenchmarkTask().execute();
@@ -86,38 +87,23 @@ public class GrpcBenchmarksActivity extends AppCompatActivity {
 
     }
 
-    private class GrpcBenchmarkTask extends AsyncTask<Integer, Void, Void> {
+    private class GrpcBenchmarkTask extends AsyncTask<Integer, Void, BenchmarkResult> {
         private String mHost;
-        private String mMessage;
         private int mPort;
-        private ManagedChannel mChannel;
 
         @Override
         protected void onPreExecute() {
             mHost = mHostEdit.getText().toString();
-            mMessage = mMessageEdit.getText().toString();
             String portStr = mPortEdit.getText().toString();
             mPort = TextUtils.isEmpty(portStr) ? 0 : Integer.valueOf(portStr);
             mResultText.setText("");
         }
 
         @Override
-        protected Void doInBackground(Integer... nums) {
+        protected BenchmarkResult doInBackground(Integer... nums) {
             try {
-                mChannel = ManagedChannelBuilder.forAddress(mHost, mPort)
-                        .usePlaintext(true)
-                        .build();
-                final GreeterGrpc.GreeterBlockingStub stub = GreeterGrpc.newBlockingStub(mChannel);
-                final HelloRequest message = new HelloRequest();
-                message.name = mMessage;
-                HelloReply reply = stub.sayHello(message);
-                long size = message.getSerializedSize() + reply.getSerializedSize();
-                benchmark("Sending and recieving hello world greeting (gRPC)",
-                        size, new Action() {
-                            public void execute() {
-                                stub.sayHello(message);
-                            }
-                });
+                BenchmarkResult res = GrpcBenchmarker.helloWorld(mHost, mPort);
+                return res;
             } catch (Exception e) {
                 System.out.println("Exception! " + e);
             }
@@ -125,41 +111,9 @@ public class GrpcBenchmarksActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Void nothing) {
+        protected void onPostExecute(BenchmarkResult res) {
             mBenchmarkButton.setEnabled(true);
-        }
-
-        private void benchmark(String name, long dataSize, Action task) {
-            for (int i = 0; i < 10; ++i) {
-                task.execute();
-            }
-
-            // Run it progressively more times until we've got a reasonable sample
-            int iterations = 1;
-            long elapsed = timeAction(task, iterations);
-            while (elapsed < 3000) {
-                iterations *= 2;
-                elapsed = timeAction(task, iterations);
-            }
-
-            // Upscale the sample to the target time. Do this in floating point arithmetic
-            // to avoid overflow issues.
-            iterations = (int) ((30000 / (double) elapsed) * iterations);
-            elapsed = timeAction(task, iterations);
-            System.out.println(name + ": " + iterations + " iterations in "
-                    + (elapsed/1000f) + "s; "
-                    + (iterations * dataSize) / (elapsed * 1024 * 1024 / 1000f)
-                    + "MB/s");
-        }
-
-        private long timeAction(Action task, int iterations) {
-            System.gc();
-            long start = System.currentTimeMillis();
-            for (int i = 0; i < iterations; i++) {
-                task.execute();
-            }
-            long end = System.currentTimeMillis();
-            return end - start;
+            mResultText.setText(res.toString());
         }
     }
 
@@ -208,9 +162,5 @@ public class GrpcBenchmarksActivity extends AppCompatActivity {
             mResultText.setText(result);
             mSendButton.setEnabled(true);
         }
-    }
-
-    interface Action {
-        void execute();
     }
 }

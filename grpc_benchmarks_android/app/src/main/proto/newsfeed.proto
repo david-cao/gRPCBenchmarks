@@ -1,6 +1,7 @@
 syntax = "proto3";
 package benchmarks;
 
+option optimize_for = LITE_RUNTIME;
 option java_multiple_files = true;
 option java_package = "io.grpc.benchmarks";
 option java_outer_classname = "NewsfeedProtos";

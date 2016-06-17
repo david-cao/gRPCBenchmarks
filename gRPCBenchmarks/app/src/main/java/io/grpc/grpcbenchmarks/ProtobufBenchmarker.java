@@ -1,7 +1,8 @@
-package io.grpc.benchmarks;
+package io.grpc.grpcbenchmarks;
 
-import com.google.protobuf.nano.CodedOutputByteBufferNano;
-import com.google.protobuf.nano.MessageNano;
+import com.google.protobuf.CodedInputStream;
+import com.google.protobuf.CodedOutputStream;
+import com.google.protobuf.MessageLite;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,123 +13,111 @@ import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import io.grpc.benchmarks.Small1Request;
+import io.grpc.benchmarks.AddressBook;
 /**
- * Created by davidcao on 5/31/16.
- * Largely taken from com.google.protobuf/benchmarks
+ * Created by davidcao on 6/13/16.
  */
-
-//TODO: Properly figure out how to handle exceptions (AKA no more `throws Exception`)
-
 public class ProtobufBenchmarker {
-
     private static final long MIN_SAMPLE_TIME_MS = 2 * 1000;
     private static final long TARGET_TIME_MS = 10 * 1000;
 
     public static void main(String[] args) {
-
-    }
-
-    //Modular benchmarks, return a BenchmarkResult for displaying to user.
-    public static BenchmarkResult serializeProtobufToByteArray(final MessageNano message, boolean gzip) throws Exception {
-        final int serializedSize = message.getSerializedSize();
-
-        if (gzip) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(message.getSerializedSize());
-            GZIPOutputStream gos = new GZIPOutputStream(bos);
-            gos.write(MessageNano.toByteArray(message));
-            gos.close();
-            bos.close();
-
-            BenchmarkResult res = benchmark("Serialize to byte array (gzip)", serializedSize, new Action() {
-                @Override
-                public void execute() throws IOException {
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream(serializedSize);
-                    GZIPOutputStream gos = new GZIPOutputStream(bos);
-                    gos.write(MessageNano.toByteArray(message));
-                    gos.close();
-                    bos.close();
-                    bos.toByteArray();
-                }
-            });
-            res.compressedSize = bos.toByteArray().length;
-            return res;
-        } else {
-            return benchmark("Serialize to byte array", serializedSize, new Action() {
-                @Override
-                public void execute() {
-                    MessageNano.toByteArray(message);
-                }
-            });
+        try {
+            Small1Request m = (Small1Request) ProtobufRandomWriter.randomProto0();
+            System.out.println("size " + m.getSerializedSize());
+            m.toBuilder().setName("tljasdljradsfsadfsadfasdfasdfasdfsaasdfasdffsdh").build();
+            System.out.println("size " + m.getSerializedSize());
+        } catch (Exception e) {
+            System.out.println("Exception: " + e);
         }
     }
 
-    public static BenchmarkResult serializeProtobufToByteArray(final MessageNano message) throws Exception {
-        final int serializedSize = message.getSerializedSize();
-        return benchmark("Serialize to byte array", serializedSize, new Action() {
+    public static BenchmarkResult serializeProtobufToByteArray(final MessageLite msg)
+            throws Exception
+    {
+        final MessageLite clonedMessage = msg.getDefaultInstanceForType().toBuilder().mergeFrom(msg).build();
+        int serializedSize = msg.getSerializedSize();
+        return benchmark("Serialize protobuf to byte array", serializedSize, new Action() {
             @Override
             public void execute() {
-                MessageNano.toByteArray(message);
+                MessageLite test = clonedMessage.getDefaultInstanceForType().toBuilder().mergeFrom(clonedMessage).build();
+                test.toByteArray();
             }
         });
     }
 
-    //TODO: This is probably expensive, is there another way to do this?
-    //TODO: Is gzip possible here?
-    public static BenchmarkResult serializeProtobufToByteBuffer(final MessageNano message) throws Exception {
-        final int serializedSize = message.getSerializedSize();
-        return benchmark("Serialize to CodedOutputByteBufferNano", message.getSerializedSize(), new Action() {
-            @Override
-            public void execute() throws IOException {
-                message.writeTo(CodedOutputByteBufferNano.newInstance(new byte[serializedSize]));
-            }
-        });
-    }
-
-    //TODO: Figure out a better way to do this?
-    public static BenchmarkResult deserializeProtobufFromByteArray(final MessageNano message, boolean gzip) throws Exception {
-        final int serializedSize = message.getSerializedSize();
-
-        if (gzip) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(serializedSize);
-            GZIPOutputStream gos = new GZIPOutputStream(bos);
-            gos.write(MessageNano.toByteArray(message));
-            gos.close();
-            bos.close();
-            final byte[] compressedData = bos.toByteArray();
-
-            BenchmarkResult res = benchmark("Deserialize from byte array (gzip)", serializedSize, new Action() {
-                @Override
-                public void execute() throws Exception {
-                    //TODO: Figure out best practices
-                    ByteArrayInputStream bis = new ByteArrayInputStream(compressedData);
-                    GZIPInputStream gis = new GZIPInputStream(bis, serializedSize);
-                    byte[] inputData = new byte[serializedSize];
-                    gis.read(inputData);
-                    gis.close();
-                    bis.close();
-                    MessageNano.mergeFrom(message.getClass().newInstance(), inputData);
-                }
-            });
-            res.compressedSize = compressedData.length;
-            return res;
-        } else {
-            final byte inputData[] = MessageNano.toByteArray(message);
-            return benchmark("Deserialize from byte array", serializedSize, new Action() {
-                @Override
-                public void execute() throws Exception {
-                    MessageNano.mergeFrom(message.getClass().newInstance(), inputData);
-                }
-            });
-        }
-    }
-
-    public static BenchmarkResult deserializeProtobufFromByteArray(final MessageNano message) throws Exception {
-        final int serializedSize = message.getSerializedSize();
-        final byte inputData[] = MessageNano.toByteArray(message);
-        return benchmark("Deserialize from byte array", serializedSize, new Action() {
+    public static BenchmarkResult serializeProtobufToCodedOutputStream(final MessageLite msg)
+            throws Exception
+    {
+        final int serializedSize = msg.getSerializedSize();
+        return benchmark("Serialize protobuf to CodedOutputStream", serializedSize, new Action() {
             @Override
             public void execute() throws Exception {
-                MessageNano.mergeFrom(message.getClass().newInstance(), inputData);
+                CodedOutputStream cos = CodedOutputStream.newInstance(new byte[serializedSize]);
+                msg.writeTo(cos);
+                cos.flush();
+                cos.checkNoSpaceLeft();
+            }
+        });
+    }
+
+    public static BenchmarkResult serializeProtobufToByteArrayOutputStream(final MessageLite msg)
+            throws Exception
+    {
+        final int serializedSize = msg.getSerializedSize();
+        return benchmark("serialize protobuf to ByteArrayOutputStream", serializedSize, new Action() {
+            @Override
+            public void execute() throws Exception {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream(serializedSize);
+                msg.writeTo(baos);
+                baos.flush();
+                baos.toByteArray();
+            }
+        });
+    }
+
+    public static BenchmarkResult deserializeProtobufFromByteArray(final MessageLite msg)
+            throws Exception
+    {
+        final int serializeSize = msg.getSerializedSize();
+        final byte[] data = msg.toByteArray();
+        return benchmark("Deserialize protobuf from byte array", serializeSize, new Action() {
+            @Override
+            public void execute() throws Exception {
+                msg.newBuilderForType().mergeFrom(data).build();
+            }
+        });
+    }
+
+    public static BenchmarkResult deserializeProtobufFromCodedInputStream(final MessageLite msg)
+            throws Exception
+    {
+        final int serializedSize = msg.getSerializedSize();
+        final byte[] data = msg.toByteArray();
+        return benchmark("Deserialize protobuf from CodedInputStream",
+                serializedSize,
+                new Action() {
+            @Override
+            public void execute() throws Exception {
+                CodedInputStream cis = CodedInputStream.newInstance(data);
+                msg.newBuilderForType().mergeFrom(cis).build();
+            }
+        });
+    }
+
+    public static BenchmarkResult deserializeProtobufFromByteArrayInputStream(final MessageLite msg)
+        throws Exception
+    {
+        final int serializedSize = msg.getSerializedSize();
+        final byte[] data = msg.toByteArray();
+        return benchmark("Deserialize protobuf from ByteArrayInputStream",
+                serializedSize,
+                new Action() {
+            @Override
+            public void execute() throws Exception {
+                ByteArrayInputStream bais = new ByteArrayInputStream(data);
+                msg.newBuilderForType().mergeFrom(bais).build();
             }
         });
     }
