@@ -10,7 +10,7 @@ import java.util.Random;
 import io.grpc.benchmarks.FriendsList;
 import io.grpc.benchmarks.Post;
 import io.grpc.benchmarks.Profile;
-import io.grpc.benchmarks.Small1Request;
+import io.grpc.benchmarks.SmallRequest;
 import io.grpc.benchmarks.Thing1;
 import io.grpc.benchmarks.Things;
 import io.grpc.benchmarks.AddressBook;
@@ -38,7 +38,7 @@ public class ProtobufRandomWriter {
 
     // These catches should techinically never be happening
     public static String protoToJsonString0(MessageLite m) {
-        Small1Request s = (Small1Request) m;
+        SmallRequest s = (SmallRequest) m;
         JSONObject json = new JSONObject();
         try {
             json.put("name", s.getName());
@@ -180,7 +180,7 @@ public class ProtobufRandomWriter {
 
     public static MessageLite randomProto0() {
         Random r = new Random();
-        Small1Request m = Small1Request.getDefaultInstance();
+        SmallRequest m = SmallRequest.getDefaultInstance();
         return m.toBuilder().setName(randomAsciiString(r, 30)).build();
     }
 

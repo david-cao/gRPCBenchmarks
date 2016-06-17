@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import io.grpc.benchmarks.Small1Request;
+import io.grpc.benchmarks.SmallRequest;
 import io.grpc.benchmarks.AddressBook;
 /**
  * Created by davidcao on 6/13/16.
@@ -24,7 +24,7 @@ public class ProtobufBenchmarker {
 
     public static void main(String[] args) {
         try {
-            Small1Request m = (Small1Request) ProtobufRandomWriter.randomProto0();
+            SmallRequest m = (SmallRequest) ProtobufRandomWriter.randomProto0();
             System.out.println("size " + m.getSerializedSize());
             m.toBuilder().setName("tljasdljradsfsadfsadfasdfasdfasdfsaasdfasdffsdh").build();
             System.out.println("size " + m.getSerializedSize());

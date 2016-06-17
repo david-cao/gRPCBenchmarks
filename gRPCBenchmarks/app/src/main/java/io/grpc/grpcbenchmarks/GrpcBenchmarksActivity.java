@@ -60,10 +60,9 @@ public class GrpcBenchmarksActivity extends AppCompatActivity {
         protected String doInBackground(Void... nothing) {
             try {
                 String ip="www.google.com"; String pingResult="  ";
-                String pingCmd="ping"+ip;
 
                 Runtime r=Runtime.getRuntime();
-                Process p=r.exec(new String[] {"ping", "-c 4", "www.google.pt"});
+                Process p=r.exec(new String[] {"ping", "-c 4", ip});
                 BufferedReader in=new BufferedReader(new InputStreamReader(p.getInputStream()));
                 String inputLine;
                 while( (inputLine = in.readLine()) != null)
