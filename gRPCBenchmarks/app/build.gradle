@@ -11,7 +11,15 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
+        multiDexEnabled true
     }
+//    packagingOptions {
+//        exclude 'META-INF/INDEX.LIST'
+//        exclude 'META-INF/io.netty.versions.properties'
+//
+//        pickFirst 'META-INF/services/io.grpc.ManagedChannelProvider'
+//    }
     buildTypes {
         release {
             minifyEnabled false
@@ -58,6 +66,13 @@ protobuf {
     }
 }
 
+def epoll_suffix = "";
+if (osdetector.classifier in ["linux-x86_64"]) {
+    // The native code is only pre-compiled on certain platforms.
+    epoll_suffix = ":" + osdetector.classifier
+}
+
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
@@ -66,8 +81,17 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.4.0'
 
     compile 'io.grpc:grpc-protobuf-lite:0.15.0-SNAPSHOT'
+//    compile 'io.grpc:grpc-netty:0.15.0-SNAPSHOT'
     compile 'io.grpc:grpc-okhttp:0.15.0-SNAPSHOT'
     compile 'io.grpc:grpc-stub:0.15.0-SNAPSHOT'
     compile 'javax.annotation:javax.annotation-api:1.2'
     compile 'com.google.protobuf:protobuf-java:3.0.0-beta-3'
+
+    // for grpc benchmarks
+    compile 'org.hdrhistogram:HdrHistogram:2.1.8'
+//    compile 'io.netty:netty-codec-http2:[4.1.1.Final]'
+//    compile 'io.netty:netty-transport-native-epoll:4.1.1.Final' + epoll_suffix
+//    compile 'io.netty:netty-tcnative-boringssl-static:1.1.33.Fork17'
+
+    compile 'com.android.support:multidex:1.0.0'
 }

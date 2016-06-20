@@ -23,6 +23,24 @@ import io.grpc.examples.helloworld.GreeterGrpc;
 import io.grpc.examples.helloworld.HelloReply;
 import io.grpc.examples.helloworld.HelloRequest;
 
+import io.grpc.grpcbenchmarks.qps.AsyncClient;
+import io.grpc.grpcbenchmarks.qps.ClientConfiguration;
+
+import static io.grpc.grpcbenchmarks.qps.ClientConfiguration.ClientParam.ADDRESS;
+import static io.grpc.grpcbenchmarks.qps.ClientConfiguration.ClientParam.CHANNELS;
+import static io.grpc.grpcbenchmarks.qps.ClientConfiguration.ClientParam.CLIENT_PAYLOAD;
+import static io.grpc.grpcbenchmarks.qps.ClientConfiguration.ClientParam.DIRECTEXECUTOR;
+import static io.grpc.grpcbenchmarks.qps.ClientConfiguration.ClientParam.DURATION;
+import static io.grpc.grpcbenchmarks.qps.ClientConfiguration.ClientParam.OUTSTANDING_RPCS;
+import static io.grpc.grpcbenchmarks.qps.ClientConfiguration.ClientParam.SAVE_HISTOGRAM;
+import static io.grpc.grpcbenchmarks.qps.ClientConfiguration.ClientParam.SERVER_PAYLOAD;
+import static io.grpc.grpcbenchmarks.qps.ClientConfiguration.ClientParam.STREAMING_RPCS;
+import static io.grpc.grpcbenchmarks.qps.ClientConfiguration.ClientParam.TESTCA;
+import static io.grpc.grpcbenchmarks.qps.ClientConfiguration.ClientParam.TLS;
+import static io.grpc.grpcbenchmarks.qps.ClientConfiguration.ClientParam.TRANSPORT;
+import static io.grpc.grpcbenchmarks.qps.ClientConfiguration.ClientParam.USE_DEFAULT_CIPHERS;
+import static io.grpc.grpcbenchmarks.qps.ClientConfiguration.ClientParam.WARMUP_DURATION;
+
 public class GrpcBenchmarksActivity extends AppCompatActivity {
     private Button mSendButton;
     private Button mBenchmarkButton;
@@ -52,12 +70,17 @@ public class GrpcBenchmarksActivity extends AppCompatActivity {
     }
 
     public void beginBenchmark(View v) {
-        new BenchmarkTask().execute();
+        new BenchmarkTask().execute("--address=192.168.42.245:50052");
     }
 
-    private class BenchmarkTask extends AsyncTask<Void, Void, String> {
+    private class BenchmarkTask extends AsyncTask<String, Void, String> {
+//        @Override
+//        protected void onPreExecute() {
+//
+//        }
+
         @Override
-        protected String doInBackground(Void... nothing) {
+        protected String doInBackground(String... args) {
             try {
                 String ip="www.google.com"; String pingResult="  ";
 
@@ -71,6 +94,23 @@ public class GrpcBenchmarksActivity extends AppCompatActivity {
                 }
                 System.out.println(pingResult);
                 in.close();
+
+//                String args[] = {"", "2"};
+
+                ClientConfiguration.Builder configBuilder = ClientConfiguration.newBuilder(
+                        ADDRESS, CHANNELS, OUTSTANDING_RPCS, CLIENT_PAYLOAD, SERVER_PAYLOAD,
+                        TLS, TESTCA, USE_DEFAULT_CIPHERS, TRANSPORT, DURATION, WARMUP_DURATION, DIRECTEXECUTOR,
+                        SAVE_HISTOGRAM, STREAMING_RPCS);
+                ClientConfiguration config;
+                try {
+                    config = configBuilder.build(args);
+                    AsyncClient client = new AsyncClient(config);
+                    client.run();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    configBuilder.printUsage();
+                }
+
             } catch (IOException e) {
                 System.out.println("Exception " + e);
             }
