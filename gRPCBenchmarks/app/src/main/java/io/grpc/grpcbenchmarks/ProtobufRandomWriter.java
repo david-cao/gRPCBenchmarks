@@ -25,7 +25,7 @@ public class ProtobufRandomWriter {
         char s[] = new char[len];
         for (int i = 0; i < len; ++i) {
             // generate a random ascii character that is a valid character
-            s[i] = (char)(r.nextInt(95) + 32);
+            s[i] = (char) (r.nextInt(95) + 32);
         }
         return new String(s);
     }
@@ -43,8 +43,9 @@ public class ProtobufRandomWriter {
         try {
             json.put("name", s.getName());
             return json.toString();
-        } catch(JSONException e) {
-            System.out.println("Failed to parse JSON: " + e);;
+        } catch (JSONException e) {
+            System.out.println("Failed to parse JSON: " + e);
+            ;
             return null;
         }
     }
@@ -53,12 +54,12 @@ public class ProtobufRandomWriter {
         AddressBook a = (AddressBook) m;
         JSONObject json = new JSONObject();
         try {
-            for (Person p: a.getPeopleList()) {
+            for (Person p : a.getPeopleList()) {
                 JSONObject jsonPerson = new JSONObject();
                 jsonPerson.put("name", p.getName())
                         .put("id", p.getId())
                         .put("email", p.getEmail());
-                for (Person.PhoneNumber pn: p.getPhonesList()) {
+                for (Person.PhoneNumber pn : p.getPhonesList()) {
                     JSONObject jsonPhoneNumber = new JSONObject();
                     jsonPhoneNumber.put("number", pn.getNumber())
                             .put("type", pn.getTypeValue());
@@ -67,8 +68,9 @@ public class ProtobufRandomWriter {
                 json.accumulate("people", jsonPerson);
             }
             return json.toString();
-        } catch(JSONException e) {
-            System.out.println("Failed to parse JSON: " + e);;
+        } catch (JSONException e) {
+            System.out.println("Failed to parse JSON: " + e);
+            ;
             return null;
         }
     }
@@ -77,23 +79,23 @@ public class ProtobufRandomWriter {
         FriendsList friendsList = (FriendsList) m;
         JSONObject friendsListJson = new JSONObject();
         try {
-            for (Profile profile: friendsList.getProfilesList()) {
+            for (Profile profile : friendsList.getProfilesList()) {
                 JSONObject profileJson = new JSONObject();
                 profileJson.put("id", profile.getId())
                         .put("name", profile.getName())
                         .put("about", profile.getAbout())
                         .put("gender", profile.getGender());
-                for (Post post: profile.getPostsList()) {
+                for (Post post : profile.getPostsList()) {
                     JSONObject postJson = new JSONObject();
                     postJson.put("owner_id", post.getOwnerId())
                             .put("content", post.getContent());
-                    for (Post.Reaction reaction: post.getReactionsList()) {
+                    for (Post.Reaction reaction : post.getReactionsList()) {
                         JSONObject reactionJson = new JSONObject();
                         reactionJson.put("owner_id", reaction.getOwnerId())
                                 .put("type", reaction.getTypeValue());
                         postJson.accumulate("reactions", reactionJson);
                     }
-                    for (Post.Comment comment: post.getCommentsList()) {
+                    for (Post.Comment comment : post.getCommentsList()) {
                         JSONObject commentJson = new JSONObject();
                         commentJson.put("owner_id", comment.getOwnerId())
                                 .put("text", comment.getText());
@@ -114,7 +116,7 @@ public class ProtobufRandomWriter {
         Things things = (Things) m;
         JSONObject thingsJson = new JSONObject();
         try {
-            for (Thing1 thing1: things.getThingsList()) {
+            for (Thing1 thing1 : things.getThingsList()) {
                 JSONObject thing1Json = new JSONObject();
                 thing1Json.put("Int1", thing1.getInt1())
                         .put("Int2", thing1.getInt2())
@@ -131,7 +133,7 @@ public class ProtobufRandomWriter {
                         .put("Double1", thing1.getDouble1())
                         .put("Double2", thing1.getDouble2())
                         .put("Double3", thing1.getDouble3());
-                for (Thing1.Thing2 thing2: thing1.getThings2List()) {
+                for (Thing1.Thing2 thing2 : thing1.getThings2List()) {
                     JSONObject thing2Json = new JSONObject();
                     thing2Json.put("Int1", thing2.getInt1())
                             .put("Int2", thing2.getInt2())
@@ -148,7 +150,7 @@ public class ProtobufRandomWriter {
                             .put("Double1", thing2.getDouble1())
                             .put("Double2", thing2.getDouble2())
                             .put("Double3", thing2.getDouble3());
-                    for (Thing1.Thing2.Thing3 thing3: thing2.getThings3List()) {
+                    for (Thing1.Thing2.Thing3 thing3 : thing2.getThings3List()) {
                         JSONObject thing3Json = new JSONObject();
                         thing3Json.put("Int1", thing3.getInt1())
                                 .put("Int2", thing3.getInt2())
@@ -257,11 +259,11 @@ public class ProtobufRandomWriter {
                 .setFloat1(r.nextFloat())
                 .setFloat2(r.nextFloat())
                 .setFloat3(r.nextFloat())
-                .setString1(fixed ? randomAsciiStringFixed(r, stringSize):
+                .setString1(fixed ? randomAsciiStringFixed(r, stringSize) :
                         randomAsciiString(r, stringSize))
-                .setString2(fixed ? randomAsciiStringFixed(r, stringSize):
+                .setString2(fixed ? randomAsciiStringFixed(r, stringSize) :
                         randomAsciiString(r, stringSize))
-                .setString3(fixed ? randomAsciiStringFixed(r, stringSize):
+                .setString3(fixed ? randomAsciiStringFixed(r, stringSize) :
                         randomAsciiString(r, stringSize))
                 .setBool1(r.nextBoolean())
                 .setBool2(r.nextBoolean())
@@ -278,11 +280,11 @@ public class ProtobufRandomWriter {
                     .setFloat1(r.nextFloat())
                     .setFloat2(r.nextFloat())
                     .setFloat3(r.nextFloat())
-                    .setString1(fixed ? randomAsciiStringFixed(r, stringSize):
+                    .setString1(fixed ? randomAsciiStringFixed(r, stringSize) :
                             randomAsciiString(r, stringSize))
-                    .setString2(fixed ? randomAsciiStringFixed(r, stringSize):
+                    .setString2(fixed ? randomAsciiStringFixed(r, stringSize) :
                             randomAsciiString(r, stringSize))
-                    .setString3(fixed ? randomAsciiStringFixed(r, stringSize):
+                    .setString3(fixed ? randomAsciiStringFixed(r, stringSize) :
                             randomAsciiString(r, stringSize))
                     .setBool1(r.nextBoolean())
                     .setBool2(r.nextBoolean())
@@ -299,11 +301,11 @@ public class ProtobufRandomWriter {
                         .setFloat1(r.nextFloat())
                         .setFloat2(r.nextFloat())
                         .setFloat3(r.nextFloat())
-                        .setString1(fixed ? randomAsciiStringFixed(r, stringSize):
+                        .setString1(fixed ? randomAsciiStringFixed(r, stringSize) :
                                 randomAsciiString(r, stringSize))
-                        .setString2(fixed ? randomAsciiStringFixed(r, stringSize):
+                        .setString2(fixed ? randomAsciiStringFixed(r, stringSize) :
                                 randomAsciiString(r, stringSize))
-                        .setString3(fixed ? randomAsciiStringFixed(r, stringSize):
+                        .setString3(fixed ? randomAsciiStringFixed(r, stringSize) :
                                 randomAsciiString(r, stringSize))
                         .setBool1(r.nextBoolean())
                         .setBool2(r.nextBoolean())
@@ -320,11 +322,11 @@ public class ProtobufRandomWriter {
                             .setFloat1(r.nextFloat())
                             .setFloat2(r.nextFloat())
                             .setFloat3(r.nextFloat())
-                            .setString1(fixed ? randomAsciiStringFixed(r, stringSize):
+                            .setString1(fixed ? randomAsciiStringFixed(r, stringSize) :
                                     randomAsciiString(r, stringSize))
-                            .setString2(fixed ? randomAsciiStringFixed(r, stringSize):
+                            .setString2(fixed ? randomAsciiStringFixed(r, stringSize) :
                                     randomAsciiString(r, stringSize))
-                            .setString3(fixed ? randomAsciiStringFixed(r, stringSize):
+                            .setString3(fixed ? randomAsciiStringFixed(r, stringSize) :
                                     randomAsciiString(r, stringSize))
                             .setBool1(r.nextBoolean())
                             .setBool2(r.nextBoolean())

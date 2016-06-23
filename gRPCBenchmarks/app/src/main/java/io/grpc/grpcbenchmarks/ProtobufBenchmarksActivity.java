@@ -57,7 +57,7 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
         LinearLayout l = (LinearLayout) findViewById(R.id.protobuf_benchmark_cardlayoutlinear);
         cardViews = new ArrayList<>();
 
-        for (final Benchmark b: benchmarks) {
+        for (final Benchmark b : benchmarks) {
             final CardView cv = (CardView) inflater.inflate(R.layout.protobuf_cv, l, false);
             cv.setCardBackgroundColor(ContextCompat.getColor(getApplicationContext(),
                     R.color.cardview_light_background));
@@ -127,7 +127,7 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
             }
             mBenchmarkButton.setEnabled(false);
             mBenchmarkButton.setText(R.string.allBenchmarksButtonDisabled);
-            for (CardView cv: cardViews) {
+            for (CardView cv : cardViews) {
                 cv.findViewById(R.id.protobuf_benchmark_start).performClick();
             }
         }

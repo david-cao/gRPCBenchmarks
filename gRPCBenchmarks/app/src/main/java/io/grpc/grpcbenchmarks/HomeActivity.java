@@ -22,4 +22,9 @@ public class HomeActivity extends AppCompatActivity {
         Intent intent = new Intent(this, GrpcBenchmarksActivity.class);
         startActivity(intent);
     }
+
+    public void showJsonBenchmarks(View v) {
+        Intent intent = new Intent(this, JsonBenchmarkActivity.class);
+        startActivity(intent);
+    }
 }

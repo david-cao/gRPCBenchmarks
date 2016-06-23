@@ -15,6 +15,7 @@ import java.util.zip.GZIPOutputStream;
 
 import io.grpc.benchmarks.SmallRequest;
 import io.grpc.benchmarks.AddressBook;
+
 /**
  * Created by davidcao on 6/13/16.
  */
@@ -34,8 +35,7 @@ public class ProtobufBenchmarker {
     }
 
     public static BenchmarkResult serializeProtobufToByteArray(final MessageLite msg)
-            throws Exception
-    {
+            throws Exception {
         final MessageLite clonedMessage = msg.getDefaultInstanceForType().toBuilder().mergeFrom(msg).build();
         int serializedSize = msg.getSerializedSize();
         return benchmark("Serialize protobuf to byte array", serializedSize, new Action() {
@@ -48,8 +48,7 @@ public class ProtobufBenchmarker {
     }
 
     public static BenchmarkResult serializeProtobufToCodedOutputStream(final MessageLite msg)
-            throws Exception
-    {
+            throws Exception {
         final int serializedSize = msg.getSerializedSize();
         return benchmark("Serialize protobuf to CodedOutputStream", serializedSize, new Action() {
             @Override
@@ -63,8 +62,7 @@ public class ProtobufBenchmarker {
     }
 
     public static BenchmarkResult serializeProtobufToByteArrayOutputStream(final MessageLite msg)
-            throws Exception
-    {
+            throws Exception {
         final int serializedSize = msg.getSerializedSize();
         return benchmark("serialize protobuf to ByteArrayOutputStream", serializedSize, new Action() {
             @Override
@@ -78,8 +76,7 @@ public class ProtobufBenchmarker {
     }
 
     public static BenchmarkResult deserializeProtobufFromByteArray(final MessageLite msg)
-            throws Exception
-    {
+            throws Exception {
         final int serializeSize = msg.getSerializedSize();
         final byte[] data = msg.toByteArray();
         return benchmark("Deserialize protobuf from byte array", serializeSize, new Action() {
@@ -91,35 +88,33 @@ public class ProtobufBenchmarker {
     }
 
     public static BenchmarkResult deserializeProtobufFromCodedInputStream(final MessageLite msg)
-            throws Exception
-    {
+            throws Exception {
         final int serializedSize = msg.getSerializedSize();
         final byte[] data = msg.toByteArray();
         return benchmark("Deserialize protobuf from CodedInputStream",
                 serializedSize,
                 new Action() {
-            @Override
-            public void execute() throws Exception {
-                CodedInputStream cis = CodedInputStream.newInstance(data);
-                msg.newBuilderForType().mergeFrom(cis).build();
-            }
-        });
+                    @Override
+                    public void execute() throws Exception {
+                        CodedInputStream cis = CodedInputStream.newInstance(data);
+                        msg.newBuilderForType().mergeFrom(cis).build();
+                    }
+                });
     }
 
     public static BenchmarkResult deserializeProtobufFromByteArrayInputStream(final MessageLite msg)
-        throws Exception
-    {
+            throws Exception {
         final int serializedSize = msg.getSerializedSize();
         final byte[] data = msg.toByteArray();
         return benchmark("Deserialize protobuf from ByteArrayInputStream",
                 serializedSize,
                 new Action() {
-            @Override
-            public void execute() throws Exception {
-                ByteArrayInputStream bais = new ByteArrayInputStream(data);
-                msg.newBuilderForType().mergeFrom(bais).build();
-            }
-        });
+                    @Override
+                    public void execute() throws Exception {
+                        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+                        msg.newBuilderForType().mergeFrom(bais).build();
+                    }
+                });
     }
 
     public static BenchmarkResult serializeJsonToByteArray(final String jsonString, boolean gzip) throws Exception {

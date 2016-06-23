@@ -1,7 +1,6 @@
 package io.grpc.grpcbenchmarks;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,9 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
 import io.grpc.ManagedChannel;
@@ -70,58 +66,49 @@ public class GrpcBenchmarksActivity extends AppCompatActivity {
     }
 
     public void beginBenchmark(View v) {
-        new BenchmarkTask().execute("--address=192.168.42.245:50052");
+        String host = mHostEdit.getText().toString();
+        String port = mPortEdit.getText().toString();
+        String addr = "--address=" + host + ":" + port;
+
+        mBenchmarkButton.setEnabled(false);
+
+        new BenchmarkTask().execute(addr);
     }
 
     private class BenchmarkTask extends AsyncTask<String, Void, String> {
-//        @Override
-//        protected void onPreExecute() {
-//
-//        }
+
+        @Override
+        protected void onPreExecute() {
+            System.out.println("Starting gRPC benchmarks");
+            mResultText.setText("Running gRPC benchmarks...");
+        }
 
         @Override
         protected String doInBackground(String... args) {
+            String results = "";
+            ClientConfiguration.Builder configBuilder = ClientConfiguration.newBuilder(
+                    ADDRESS, CHANNELS, OUTSTANDING_RPCS, CLIENT_PAYLOAD, SERVER_PAYLOAD,
+                    TLS, TESTCA, USE_DEFAULT_CIPHERS, TRANSPORT, DURATION, WARMUP_DURATION, DIRECTEXECUTOR,
+                    SAVE_HISTOGRAM, STREAMING_RPCS);
             try {
-                String ip="www.google.com"; String pingResult="  ";
-
-                Runtime r=Runtime.getRuntime();
-                Process p=r.exec(new String[] {"ping", "-c 4", ip});
-                BufferedReader in=new BufferedReader(new InputStreamReader(p.getInputStream()));
-                String inputLine;
-                while( (inputLine = in.readLine()) != null)
-                {
-                    pingResult=inputLine;
-                }
-                System.out.println(pingResult);
-                in.close();
-
-//                String args[] = {"", "2"};
-
-                ClientConfiguration.Builder configBuilder = ClientConfiguration.newBuilder(
-                        ADDRESS, CHANNELS, OUTSTANDING_RPCS, CLIENT_PAYLOAD, SERVER_PAYLOAD,
-                        TLS, TESTCA, USE_DEFAULT_CIPHERS, TRANSPORT, DURATION, WARMUP_DURATION, DIRECTEXECUTOR,
-                        SAVE_HISTOGRAM, STREAMING_RPCS);
                 ClientConfiguration config;
-                try {
-                    config = configBuilder.build(args);
-                    AsyncClient client = new AsyncClient(config);
-                    client.run();
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                    configBuilder.printUsage();
-                }
-
-            } catch (IOException e) {
-                System.out.println("Exception " + e);
+                config = configBuilder.build(args);
+                AsyncClient client = new AsyncClient(config);
+                GrpcBenchmarkResult grpcBenchmarkResult = client.run();
+                results += grpcBenchmarkResult.toString();
+            } catch (Exception e) {
+                System.out.println("Benchmarking error: " + e.getMessage());
+                configBuilder.printUsage();
             }
 
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            return cm.getActiveNetworkInfo().toString();
+            return results;
         }
 
         @Override
         protected void onPostExecute(String result) {
             System.out.println(result);
+            mResultText.setText(result);
+            mBenchmarkButton.setEnabled(true);
         }
     }
 
@@ -158,7 +145,6 @@ public class GrpcBenchmarksActivity extends AppCompatActivity {
                 System.out.println("Channel after build: " + mChannel);
                 return sayHello(mChannel);
             } catch (Exception e) {
-//                return "Failed... : " + Arrays.toString(e.getStackTrace());
                 return "Failed... : " + e.getMessage();
             }
         }

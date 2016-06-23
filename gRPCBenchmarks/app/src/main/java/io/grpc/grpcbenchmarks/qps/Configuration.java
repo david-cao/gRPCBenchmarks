@@ -35,21 +35,23 @@ package io.grpc.grpcbenchmarks.qps;
  * Configuration for a benchmark application.
  */
 public interface Configuration {
-  /**
-   * Builder for the {@link Configuration}.
-   * @param <T> The type of {@link Configuration} that this builder creates.
-   */
-  interface Builder<T extends Configuration> {
     /**
-     * Builds the {@link Configuration} from the given command-line arguments.
-     * @throws IllegalArgumentException if unable to build the configuration for any reason.
+     * Builder for the {@link Configuration}.
+     *
+     * @param <T> The type of {@link Configuration} that this builder creates.
      */
-    T build(String[] args);
+    interface Builder<T extends Configuration> {
+        /**
+         * Builds the {@link Configuration} from the given command-line arguments.
+         *
+         * @throws IllegalArgumentException if unable to build the configuration for any reason.
+         */
+        T build(String[] args);
 
-    /**
-     * Prints the command-line usage for the application based on the options supported by this
-     * builder.
-     */
-    void printUsage();
-  }
+        /**
+         * Prints the command-line usage for the application based on the options supported by this
+         * builder.
+         */
+        void printUsage();
+    }
 }

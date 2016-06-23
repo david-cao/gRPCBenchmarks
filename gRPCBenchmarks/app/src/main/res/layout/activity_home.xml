@@ -16,9 +16,16 @@
             android:text="@string/protobufBenchmarksName"
             android:onClick="showProtobufBenchmarks" />
 
-    <Button android:layout_width="match_parent"
+    <Button android:id="@+id/grpc_button"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/protobuf_button"
             android:text="@string/grpcBenchmarksName"
             android:onClick="showGrpcBenchmarks" />
+
+    <Button android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/grpc_button"
+            android:text="@string/jsonBenchmarksName"
+            android:onClick="showJsonBenchmarks" />
 </RelativeLayout>

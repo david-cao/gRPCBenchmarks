@@ -2,6 +2,8 @@
     <string name="app_name">gRPC Benchmarks Lite</string>
     <string name="protobufBenchmarksName">Protobuf Benchmarks</string>
     <string name="grpcBenchmarksName">gRPC Benchmarks</string>
+    <string name="jsonBenchmarksName">JSON Benchmarks</string>
+
     <string name="gzipLabel">gzip JSON</string>
 
     <string name="protobuf_spinner_prompt">Pick a proto to benchmark</string>

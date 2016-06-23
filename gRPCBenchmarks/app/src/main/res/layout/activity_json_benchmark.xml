@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -28,16 +29,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
-                android:text="50051"
+                android:text="4567"
                 android:hint="Enter Port" />
     </LinearLayout>
-
-
-    <EditText
-            android:id="@+id/message_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter message to send" />
 
     <TextView
             android:layout_width="match_parent"
@@ -60,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="sendMessage"
-            android:text="Send Grpc Request" />
+            android:text="Send JSON Request" />
 
     <Button
             android:id="@+id/benchmark_button"

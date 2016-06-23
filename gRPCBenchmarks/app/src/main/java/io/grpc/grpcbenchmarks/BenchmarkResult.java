@@ -24,7 +24,7 @@ public class BenchmarkResult {
     public String toString() {
         return name + ": serialized size: " + size + "bytes"
                 + (compressedSize != 0 ? " (" + compressedSize + "bytes gzipped), " : ", ")
-                + iterations + " iterations in " + (elapsed/1000f)
+                + iterations + " iterations in " + (elapsed / 1000f)
                 + "s, ~" + mbps + "Mb/s.";
     }
 
