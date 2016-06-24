@@ -17,6 +17,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import io.grpc.grpcbenchmarks.qps.AsyncJsonClient;
+
 public class JsonBenchmarkActivity extends AppCompatActivity {
     private Button mSendButton;
     private Button mBenchmarkButton;
@@ -55,33 +57,42 @@ public class JsonBenchmarkActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             String urlString = params[0];
-            byte payload[] = params[1].getBytes();
-
-            InputStream in;
             try {
-                URL url = new URL(urlString);
-
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoOutput(true);
-//                connection.setChunkedStreamingMode(0);
-                connection.setFixedLengthStreamingMode(payload.length);
-
-                OutputStream out = new BufferedOutputStream(connection.getOutputStream());
-                out.write(payload);
-                out.close();
-
-                in = new BufferedInputStream(connection.getInputStream());
-
-                String response = IOUtils.toString(in);
-                System.out.println("Reponse: " + response);
-
-                connection.disconnect();
-
-                return response;
+                AsyncJsonClient jsonClient = new AsyncJsonClient(new URL(urlString));
+                jsonClient.run();
             } catch (Exception e) {
-                System.out.println("Connection error: " + e);
-                return "Error";
+                System.out.println("Exception! " + e);
+            } finally {
+                return null;
             }
+
+//            byte payload[] = params[1].getBytes();
+//
+//            InputStream in;
+//            try {
+//                URL url = new URL(urlString);
+//
+//                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                connection.setDoOutput(true);
+////                connection.setChunkedStreamingMode(0);
+//                connection.setFixedLengthStreamingMode(payload.length);
+//
+//                OutputStream out = new BufferedOutputStream(connection.getOutputStream());
+//                out.write(payload);
+//                out.close();
+//
+//                in = new BufferedInputStream(connection.getInputStream());
+//
+//                String response = IOUtils.toString(in);
+//                System.out.println("Reponse: " + response);
+//
+//                connection.disconnect();
+//
+//                return response;
+//            } catch (Exception e) {
+//                System.out.println("Connection error: " + e);
+//                return "Error";
+//            }
         }
 
         @Override
