@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import java.util.Random;
 
+import io.grpc.benchmarks.Attributes;
 import io.grpc.benchmarks.FriendsList;
 import io.grpc.benchmarks.Post;
 import io.grpc.benchmarks.Profile;
@@ -36,7 +37,7 @@ public class ProtobufRandomWriter {
         return randomAsciiStringFixed(r, len);
     }
 
-    // These catches should techinically never be happening
+    // These catches should techinically never be happening, since
     public static String protoToJsonString0(MessageLite m) {
         SmallRequest s = (SmallRequest) m;
         JSONObject json = new JSONObject();
@@ -45,7 +46,6 @@ public class ProtobufRandomWriter {
             return json.toString();
         } catch (JSONException e) {
             System.out.println("Failed to parse JSON: " + e);
-            ;
             return null;
         }
     }
@@ -70,7 +70,6 @@ public class ProtobufRandomWriter {
             return json.toString();
         } catch (JSONException e) {
             System.out.println("Failed to parse JSON: " + e);
-            ;
             return null;
         }
     }
@@ -117,56 +116,22 @@ public class ProtobufRandomWriter {
         JSONObject thingsJson = new JSONObject();
         try {
             for (Thing1 thing1 : things.getThingsList()) {
+                JSONObject thing1Attribute =
+                        protoToJsonString3AttributeWriter(new JSONObject(), thing1.getAttributes());
                 JSONObject thing1Json = new JSONObject();
-                thing1Json.put("Int1", thing1.getInt1())
-                        .put("Int2", thing1.getInt2())
-                        .put("Int3", thing1.getInt3())
-                        .put("Float1", thing1.getFloat1())
-                        .put("Float2", thing1.getFloat2())
-                        .put("Float3", thing1.getFloat3())
-                        .put("String1", thing1.getString1())
-                        .put("String2", thing1.getString2())
-                        .put("String3", thing1.getString3())
-                        .put("Bool1", thing1.getBool1())
-                        .put("Bool2", thing1.getBool2())
-                        .put("Bool3", thing1.getBool3())
-                        .put("Double1", thing1.getDouble1())
-                        .put("Double2", thing1.getDouble2())
-                        .put("Double3", thing1.getDouble3());
+                thing1Json.put("attributes", thing1Attribute);
                 for (Thing1.Thing2 thing2 : thing1.getThings2List()) {
+                    JSONObject thing2Attribute =
+                            protoToJsonString3AttributeWriter(new JSONObject(),
+                                    thing2.getAttributes());
                     JSONObject thing2Json = new JSONObject();
-                    thing2Json.put("Int1", thing2.getInt1())
-                            .put("Int2", thing2.getInt2())
-                            .put("Int3", thing2.getInt3())
-                            .put("Float1", thing2.getFloat1())
-                            .put("Float2", thing2.getFloat2())
-                            .put("Float3", thing2.getFloat3())
-                            .put("String1", thing2.getString1())
-                            .put("String2", thing2.getString2())
-                            .put("String3", thing2.getString3())
-                            .put("Bool1", thing2.getBool1())
-                            .put("Bool2", thing2.getBool2())
-                            .put("Bool3", thing2.getBool3())
-                            .put("Double1", thing2.getDouble1())
-                            .put("Double2", thing2.getDouble2())
-                            .put("Double3", thing2.getDouble3());
+                    thing2Json.put("attributes", thing2Attribute);
                     for (Thing1.Thing2.Thing3 thing3 : thing2.getThings3List()) {
+                        JSONObject thing3Attribute =
+                                protoToJsonString3AttributeWriter(new JSONObject(),
+                                        thing3.getAttributes());
                         JSONObject thing3Json = new JSONObject();
-                        thing3Json.put("Int1", thing3.getInt1())
-                                .put("Int2", thing3.getInt2())
-                                .put("Int3", thing3.getInt3())
-                                .put("Float1", thing3.getFloat1())
-                                .put("Float2", thing3.getFloat2())
-                                .put("Float3", thing3.getFloat3())
-                                .put("String1", thing3.getString1())
-                                .put("String2", thing3.getString2())
-                                .put("String3", thing3.getString3())
-                                .put("Bool1", thing3.getBool1())
-                                .put("Bool2", thing3.getBool2())
-                                .put("Bool3", thing3.getBool3())
-                                .put("Double1", thing3.getDouble1())
-                                .put("Double2", thing3.getDouble2())
-                                .put("Double3", thing3.getDouble3());
+                        thing3Json.put("attributes", thing3Attribute);
                         thing2Json.accumulate("things3", thing3Json);
                     }
                     thing1Json.accumulate("things2", thing2Json);
@@ -180,14 +145,46 @@ public class ProtobufRandomWriter {
         }
     }
 
+    private static JSONObject protoToJsonString3AttributeWriter(JSONObject jsonAttribute,
+                                                                Attributes a) {
+        try {
+            jsonAttribute.put("Int1", a.getInt1())
+                    .put("Int2", a.getInt2())
+                    .put("Int3", a.getInt3())
+                    .put("Float1", a.getFloat1())
+                    .put("Float2", a.getFloat2())
+                    .put("Float3", a.getFloat3())
+                    .put("String1", a.getString1())
+                    .put("String2", a.getString2())
+                    .put("String3", a.getString3())
+                    .put("Bool1", a.getBool1())
+                    .put("Bool2", a.getBool2())
+                    .put("Bool3", a.getBool3())
+                    .put("Double1", a.getDouble1())
+                    .put("Double2", a.getDouble2())
+                    .put("Double3", a.getDouble3());
+        } catch (JSONException e) {
+            System.out.println("Failed to create attributes: " + e);
+        }
+        return jsonAttribute;
+    }
+
     public static MessageLite randomProto0() {
         Random r = new Random();
+        return randomProto0(r);
+    }
+
+    private static MessageLite randomProto0(Random r) {
         SmallRequest m = SmallRequest.getDefaultInstance();
         return m.toBuilder().setName(randomAsciiString(r, 30)).build();
     }
 
     public static MessageLite randomProto1() {
         Random r = new Random();
+        return randomProto1(r);
+    }
+
+    public static MessageLite randomProto1(Random r) {
         AddressBook.Builder addressBookBuilder = AddressBook.newBuilder();
         int numPeople = r.nextInt(10) + 1;
         for (int i = 0; i < numPeople; ++i) {
@@ -197,7 +194,6 @@ public class ProtobufRandomWriter {
                     .setId(r.nextInt())
                     .setEmail(randomAsciiString(r, 30));
             int numPhones = r.nextInt(4) + 1;
-            Person.PhoneNumber[] phones = new Person.PhoneNumber[numPhones];
             for (int j = 0; j < numPhones; ++j) {
                 personBuilder.addPhones(Person.PhoneNumber
                         .newBuilder()
@@ -213,6 +209,10 @@ public class ProtobufRandomWriter {
 
     public static MessageLite randomProto2() {
         Random r = new Random();
+        return randomProto2(r);
+    }
+
+    public static MessageLite randomProto2(Random r) {
         int numProfiles = r.nextInt(50) + 1;
         FriendsList.Builder friendsListBuilder = FriendsList.newBuilder();
         for (int i = 0; i < numProfiles; ++i) {
@@ -252,8 +252,36 @@ public class ProtobufRandomWriter {
     // TODO: maybe find a way to trim this down...
     public static MessageLite randomProto3(int stringSize, boolean fixed) {
         Random r = new Random();
+        return randomProto3(r, stringSize, fixed);
+    }
+
+    public static MessageLite randomProto3(Random r, int stringSize, boolean fixed) {
         Things.Builder thingBuilder = Things.newBuilder();
-        thingBuilder.setInt1(r.nextInt())
+        thingBuilder.setAttributes(randomAttributes(r, fixed, stringSize));
+        int numThings1 = (fixed ? 5 : r.nextInt(10) + 1);
+        for (int i = 0; i < numThings1; ++i) {
+            Thing1.Builder thing1Builder = Thing1.newBuilder();
+            thing1Builder.setAttributes(randomAttributes(r, fixed, stringSize));
+            int numThings2 = (fixed ? 5 : r.nextInt(10) + 1);
+            for (int j = 0; j < numThings2; ++j) {
+                Thing1.Thing2.Builder thing2Builder = Thing1.Thing2.newBuilder();
+                thing2Builder.setAttributes(randomAttributes(r, fixed, stringSize));
+                int numThings3 = (fixed ? 5 : r.nextInt(10) + 1);
+                for (int k = 0; k < numThings3; ++k) {
+                    Thing1.Thing2.Thing3.Builder thing3Builder = Thing1.Thing2.Thing3.newBuilder();
+                    thing3Builder.setAttributes(randomAttributes(r, fixed, stringSize));
+                    thing2Builder.addThings3(thing3Builder.build());
+                }
+                thing1Builder.addThings2(thing2Builder.build());
+            }
+            thingBuilder.addThings(thing1Builder.build());
+        }
+        return thingBuilder.build();
+    }
+
+    private static Attributes randomAttributes(Random r, boolean fixed, int stringSize) {
+        Attributes.Builder attributeBuilder = Attributes.newBuilder();
+        attributeBuilder.setInt1(r.nextInt())
                 .setInt2(r.nextInt())
                 .setInt3(r.nextInt())
                 .setFloat1(r.nextFloat())
@@ -271,76 +299,27 @@ public class ProtobufRandomWriter {
                 .setDouble1(r.nextDouble())
                 .setDouble2(r.nextDouble())
                 .setDouble3(r.nextDouble());
-        int numThings1 = (fixed ? 5 : r.nextInt(10) + 1);
-        for (int i = 0; i < numThings1; ++i) {
-            Thing1.Builder thing1Builder = Thing1.newBuilder();
-            thing1Builder.setInt1(r.nextInt())
-                    .setInt2(r.nextInt())
-                    .setInt3(r.nextInt())
-                    .setFloat1(r.nextFloat())
-                    .setFloat2(r.nextFloat())
-                    .setFloat3(r.nextFloat())
-                    .setString1(fixed ? randomAsciiStringFixed(r, stringSize) :
-                            randomAsciiString(r, stringSize))
-                    .setString2(fixed ? randomAsciiStringFixed(r, stringSize) :
-                            randomAsciiString(r, stringSize))
-                    .setString3(fixed ? randomAsciiStringFixed(r, stringSize) :
-                            randomAsciiString(r, stringSize))
-                    .setBool1(r.nextBoolean())
-                    .setBool2(r.nextBoolean())
-                    .setBool3(r.nextBoolean())
-                    .setDouble1(r.nextDouble())
-                    .setDouble2(r.nextDouble())
-                    .setDouble3(r.nextDouble());
-            int numThings2 = (fixed ? 5 : r.nextInt(10) + 1);
-            for (int j = 0; j < numThings2; ++j) {
-                Thing1.Thing2.Builder thing2Builder = Thing1.Thing2.newBuilder();
-                thing2Builder.setInt1(r.nextInt())
-                        .setInt2(r.nextInt())
-                        .setInt3(r.nextInt())
-                        .setFloat1(r.nextFloat())
-                        .setFloat2(r.nextFloat())
-                        .setFloat3(r.nextFloat())
-                        .setString1(fixed ? randomAsciiStringFixed(r, stringSize) :
-                                randomAsciiString(r, stringSize))
-                        .setString2(fixed ? randomAsciiStringFixed(r, stringSize) :
-                                randomAsciiString(r, stringSize))
-                        .setString3(fixed ? randomAsciiStringFixed(r, stringSize) :
-                                randomAsciiString(r, stringSize))
-                        .setBool1(r.nextBoolean())
-                        .setBool2(r.nextBoolean())
-                        .setBool3(r.nextBoolean())
-                        .setDouble1(r.nextDouble())
-                        .setDouble2(r.nextDouble())
-                        .setDouble3(r.nextDouble());
-                int numThings3 = (fixed ? 5 : r.nextInt(10) + 1);
-                for (int k = 0; k < numThings3; ++k) {
-                    Thing1.Thing2.Thing3.Builder thing3Builder = Thing1.Thing2.Thing3.newBuilder();
-                    thing3Builder.setInt1(r.nextInt())
-                            .setInt2(r.nextInt())
-                            .setInt3(r.nextInt())
-                            .setFloat1(r.nextFloat())
-                            .setFloat2(r.nextFloat())
-                            .setFloat3(r.nextFloat())
-                            .setString1(fixed ? randomAsciiStringFixed(r, stringSize) :
-                                    randomAsciiString(r, stringSize))
-                            .setString2(fixed ? randomAsciiStringFixed(r, stringSize) :
-                                    randomAsciiString(r, stringSize))
-                            .setString3(fixed ? randomAsciiStringFixed(r, stringSize) :
-                                    randomAsciiString(r, stringSize))
-                            .setBool1(r.nextBoolean())
-                            .setBool2(r.nextBoolean())
-                            .setBool3(r.nextBoolean())
-                            .setDouble1(r.nextDouble())
-                            .setDouble2(r.nextDouble())
-                            .setDouble3(r.nextDouble());
-                    thing2Builder.addThings3(thing3Builder.build());
-                }
-                thing1Builder.addThings2(thing2Builder.build());
-            }
-            thingBuilder.addThings(thing1Builder.build());
-        }
-        return thingBuilder.build();
+        return attributeBuilder.build();
     }
 
+    // Below are used for testing
+    public static MessageLite randomProto0(long seed) {
+        Random r = new Random(seed);
+        return randomProto0(r);
+    }
+
+    public static MessageLite randomProto1(long seed) {
+        Random r = new Random(seed);
+        return randomProto1(r);
+    }
+
+    public static MessageLite randomProto2(long seed) {
+        Random r = new Random(seed);
+        return randomProto2(r);
+    }
+
+    public static MessageLite randomProto3(long seed, int stringSize, boolean fixed) {
+        Random r = new Random(seed);
+        return randomProto3(r, stringSize, fixed);
+    }
 }

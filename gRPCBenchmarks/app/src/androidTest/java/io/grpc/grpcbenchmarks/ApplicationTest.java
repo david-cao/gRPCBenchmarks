@@ -1,13 +1,40 @@
 package io.grpc.grpcbenchmarks;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import android.support.test.runner.AndroidJUnit4;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-/**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
- */
-public class ApplicationTest extends ApplicationTestCase<Application> {
-    public ApplicationTest() {
-        super(Application.class);
+import android.test.suitebuilder.annotation.SmallTest;
+
+@RunWith(AndroidJUnit4.class)
+@SmallTest
+public class ApplicationTest {
+    @Test
+    public void randomProto0Json_isCorrect() throws Exception {
+        String json = ProtobufRandomWriter.protoToJsonString0(ProtobufRandomWriter.randomProto0(0));
+        // -181206098
+        System.out.println(json.hashCode());
+    }
+
+    @Test
+    public void randomProto1Json_isCorrect() throws Exception {
+        String json = ProtobufRandomWriter.protoToJsonString1(ProtobufRandomWriter.randomProto1(0));
+        // -1211926999
+        System.out.println(json.hashCode());
+    }
+
+    @Test
+    public void randomProto2Json_isCorrect() throws Exception {
+        String json = ProtobufRandomWriter.protoToJsonString2(ProtobufRandomWriter.randomProto2(0));
+        // -618177441
+        System.out.println(json.hashCode());
+    }
+
+    @Test
+    public void randomProto3Json_isCorrect() throws Exception {
+        String json = ProtobufRandomWriter.protoToJsonString3(
+                ProtobufRandomWriter.randomProto3(0, 10, false));
+        // -989027474
+        System.out.println(json.hashCode());
     }
 }

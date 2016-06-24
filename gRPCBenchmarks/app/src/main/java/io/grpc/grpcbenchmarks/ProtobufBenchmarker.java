@@ -13,26 +13,12 @@ import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import io.grpc.benchmarks.SmallRequest;
-import io.grpc.benchmarks.AddressBook;
-
 /**
  * Created by davidcao on 6/13/16.
  */
 public class ProtobufBenchmarker {
     private static final long MIN_SAMPLE_TIME_MS = 2 * 1000;
     private static final long TARGET_TIME_MS = 10 * 1000;
-
-    public static void main(String[] args) {
-        try {
-            SmallRequest m = (SmallRequest) ProtobufRandomWriter.randomProto0();
-            System.out.println("size " + m.getSerializedSize());
-            m.toBuilder().setName("tljasdljradsfsadfsadfasdfasdfasdfsaasdfasdffsdh").build();
-            System.out.println("size " + m.getSerializedSize());
-        } catch (Exception e) {
-            System.out.println("Exception: " + e);
-        }
-    }
 
     public static BenchmarkResult serializeProtobufToByteArray(final MessageLite msg)
             throws Exception {
