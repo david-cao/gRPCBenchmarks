@@ -2,6 +2,7 @@ package io.grpc.grpcbenchmarks;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
 import io.grpc.ManagedChannel;
@@ -69,14 +72,36 @@ public class GrpcBenchmarksActivity extends AppCompatActivity {
         String host = mHostEdit.getText().toString();
         String port = mPortEdit.getText().toString();
         String addr = "--address=" + host + ":" + port;
+        testPing(host);
 
         mBenchmarkButton.setEnabled(false);
 
-        new BenchmarkTask().execute(addr);
+        // We don't want benchmarks to run in parallel, so make sure they are in serial order
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            new BenchmarkTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, addr,
+                    "--channels=1", "--outstanding_rpcs=1", "--client_payload=100",
+                    "--server_payload=100", "--streaming_rpcs");
+        } else {
+            new BenchmarkTask().execute(addr, "--channels=1", "--outstanding_rpcs=1",
+                    "--client_payload=100", "--server_payload=100", "--streaming_rpcs");
+        }
+    }
+
+    public void testPing(String host) {
+        try {
+            Process p = Runtime.getRuntime().exec(new String[]{"ping", "-c", "4", host});
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+            String s;
+            while ((s = stdInput.readLine()) != null) {
+                System.out.println(s);
+            }
+        } catch (Exception e) {
+            System.out.println("failed to ping");
+        }
     }
 
     private class BenchmarkTask extends AsyncTask<String, Void, String> {
-
         @Override
         protected void onPreExecute() {
             System.out.println("Starting gRPC benchmarks");
@@ -94,10 +119,10 @@ public class GrpcBenchmarksActivity extends AppCompatActivity {
                 ClientConfiguration config;
                 config = configBuilder.build(args);
                 AsyncClient client = new AsyncClient(config);
-                GrpcBenchmarkResult grpcBenchmarkResult = client.run();
+                RpcBenchmarkResult grpcBenchmarkResult = client.run();
                 results += grpcBenchmarkResult.toString();
             } catch (Exception e) {
-                System.out.println("Benchmarking error: " + e.getMessage());
+                System.out.println("Benchmarking error: " + e);
                 configBuilder.printUsage();
             }
 

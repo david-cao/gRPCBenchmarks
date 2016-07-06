@@ -5,9 +5,10 @@ import static io.grpc.grpcbenchmarks.Utils.HISTOGRAM_PRECISION;
 
 import com.google.common.base.Preconditions;
 
-import android.os.AsyncTask;
+import android.util.Base64;
 
 import org.HdrHistogram.Histogram;
+import org.HdrHistogram.HistogramIterationValue;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
@@ -18,111 +19,181 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import io.grpc.Context;
-import io.grpc.grpcbenchmarks.GrpcBenchmarkResult;
+import io.grpc.grpcbenchmarks.RpcBenchmarkResult;
 
 /**
  * Created by davidcao on 6/22/16.
  */
 public class AsyncJsonClient {
     private URL url;
+    private static final long DURATION = 60 * 1000000000L;
+    private int outstandingConnections;
+    private int clientPayload;
+    private int serverPayload;
 
-    public static void main(String[] args) {
-
-    }
-
-    public AsyncJsonClient(URL url) {
+    public AsyncJsonClient(URL url, int outstandingConnections) {
         this.url = url;
+        this.clientPayload = 100;
+        this.serverPayload = 100;
+        this.outstandingConnections = outstandingConnections;
     }
 
-    public void run() throws Exception {
+    public RpcBenchmarkResult run() throws Exception {
         System.out.println("Starting json benchmarking");
         String simpleRequest = newJsonRequest();
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-        System.out.println("writing histogram");
+        // Run the connection once to get an estimate for packet size, then run benchmarks
+        long estimatedHeaderSize = estimateHeaderSize(simpleRequest.getBytes());
+        estimatedHeaderSize *= 2;
+        estimatedHeaderSize += simpleRequest.getBytes().length;
+        //TODO: Header will not be the same both ways, have two methods
+//        estimatedHeaderSize += sizeOfResponsePacketHere;
+
+        System.setProperty("http.keepAlive", "true");
+
         long startTime = System.nanoTime();
-        long endTime = startTime + TimeUnit.NANOSECONDS.toNanos(10 * 1000);
-        Histogram histogram = doPosts(connection, simpleRequest, endTime);
+        long endTime = startTime + DURATION;
+        List<Histogram> histograms = doBenchmarks(url, simpleRequest, endTime);
         long elapsedTime = System.nanoTime() - startTime;
+        Histogram merged = merge(histograms);
 
-        printStats(histogram, elapsedTime);
+        printStats(merged, estimatedHeaderSize, elapsedTime);
 
-//        long latency50 = histogram.getValueAtPercentile(50);
-//        long latency90 = histogram.getValueAtPercentile(90);
-//        long latency95 = histogram.getValueAtPercentile(95);
-//        long latency99 = histogram.getValueAtPercentile(99);
-//        long latency999 = histogram.getValueAtPercentile(99.9);
-//        long latencyMax = histogram.getValueAtPercentile(100);
-//        long queriesPerSecond = histogram.getTotalCount() * 1000000000L / elapsedTime;
+        long latency50 = merged.getValueAtPercentile(50);
+        long latency90 = merged.getValueAtPercentile(90);
+        long latency95 = merged.getValueAtPercentile(95);
+        long latency99 = merged.getValueAtPercentile(99);
+        long latency999 = merged.getValueAtPercentile(99.9);
+        long latencyMax = merged.getValueAtPercentile(100);
+        long queriesPerSecond = merged.getTotalCount() * 1000000000L / elapsedTime;
+
+        return new RpcBenchmarkResult(1, outstandingConnections, serverPayload, clientPayload,
+                latency50, latency90, latency95, latency99, latency999, latencyMax,
+                queriesPerSecond, estimatedHeaderSize);
     }
 
+    // Really rough way of getting packet size, since if we wanted to get actual packet
+    // we'd either need to use a deprecated library or write our own socket handler.
+    private long estimateHeaderSize(byte[] simpleRequest) {
+        long packetSize = -1;
+        try {
+            packetSize = 0;
+            HttpURLConnection connection;
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setFixedLengthStreamingMode(simpleRequest.length);
+
+            OutputStream out = new BufferedOutputStream(connection.getOutputStream());
+            out.write(simpleRequest);
+            out.close();
+
+            Map<String, List<String>> headers = connection.getHeaderFields();
+            for (Map.Entry<String, List<String>> entry: headers.entrySet()) {
+                if (entry.getKey() != null) {
+                    packetSize += entry.getKey().getBytes().length;
+                }
+                if (entry.getValue() != null) {
+                    for (String field: entry.getValue()) {
+                        packetSize += field.getBytes().length;
+                    }
+                }
+            }
+
+            connection.disconnect();
+        } catch (Exception e) {
+            System.out.println("Failed to estimate packet size: " + e);
+        } finally {
+            return packetSize;
+        }
+    }
+
+    // TODO: Make this like the actual gRPC benchmark
     private String newJsonRequest() throws Exception {
         JSONObject simpleRequest = new JSONObject();
         JSONObject payload = new JSONObject();
         payload.put("type", 0);
-        payload.put("body", new byte[100]);
+        payload.put("body", Base64.encodeToString(new byte[clientPayload], Base64.DEFAULT));
 
         simpleRequest.put("payload", payload);
         simpleRequest.put("type", 0);
-        simpleRequest.put("responseSize", 100);
+        simpleRequest.put("responseSize", serverPayload);
 
         return simpleRequest.toString();
     }
 
-    private Histogram doPosts(HttpURLConnection connection, String simpleRequest,
-                              long endTime) throws Exception {
+    private List<Histogram> doBenchmarks(URL url, String simpleRequest,
+                                   long endTime) throws Exception {
+        // possibly some checks here if we have different types of calls
+        List<HistogramFuture> futures = new ArrayList<HistogramFuture>();
+        for (int i = 0; i < outstandingConnections; ++i) {
+            final Histogram histogram = new Histogram(HISTOGRAM_MAX_VALUE, HISTOGRAM_PRECISION);
+            final HistogramFuture future = new HistogramFuture(histogram);
+            futures.add(future);
 
-        //possibly some checks here if we have different types of calls
-        final Histogram histogram = new Histogram(HISTOGRAM_MAX_VALUE, HISTOGRAM_PRECISION);
-        final HistogramFuture future = new HistogramFuture(histogram);
+            doPosts(histogram, future, url, simpleRequest, endTime);
+        }
 
-        new ConnectionTask(connection, histogram, future, endTime).execute(simpleRequest);
-
-        return future.get();
+        List<Histogram> histograms = new ArrayList<Histogram>();
+        for (HistogramFuture future: futures) {
+            histograms.add(future.get());
+        }
+        return histograms;
     }
 
-//    private Future<Histogram> doPosts(HttpURLConnection connection, byte[] simpleRequest,
-//                                      Histogram histogram, Future<Histogram> future, long endTime) {
-//
-//        long lastCall = System.nanoTime();
-//
-//        try {
-//            connection.setRequestMethod("POST");
-//            connection.setDoOutput(true);
-////                connection.setChunkedStreamingMode(0);
-//            connection.setFixedLengthStreamingMode(simpleRequest.length);
-//
-//            OutputStream out = new BufferedOutputStream(connection.getOutputStream());
-//            out.write(simpleRequest);
-//            out.close();
-//
-//            InputStream in = new BufferedInputStream(connection.getInputStream());
-//            String response = IOUtils.toString(in);
-//            System.out.println("Reponse: " + response);
-//
-//            in.close();
-//
-//            long now = System.nanoTime();
-//            histogram.recordValue((now - lastCall) / 1000);
-//            if (endTime > now) {
-//                return
-//            } else {
-//
-//            }
-//
-//        } catch (IOException e) {
-//
-//        }
-//    }
+    private void doPosts(Histogram histogram, HistogramFuture future,
+                         URL url, String payload, long endTime) {
+        try {
+            byte simpleRequest[] = payload.getBytes();
+            HttpURLConnection connection;
+            long lastCall = System.nanoTime();
+            while (lastCall < endTime) {
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setFixedLengthStreamingMode(simpleRequest.length);
 
-    private void printStats(Histogram histogram, long elapsedTime) {
+                OutputStream out = new BufferedOutputStream(connection.getOutputStream());
+                out.write(simpleRequest);
+                out.close();
+
+                InputStream in = new BufferedInputStream(connection.getInputStream());
+                String response = IOUtils.toString(in);
+                in.close();
+
+                connection.disconnect();
+
+                long now = System.nanoTime();
+                histogram.recordValue((now - lastCall) / 1000);
+                lastCall = now;
+            }
+        } catch (IOException e) {
+            System.out.println("IO EXCEPTION IN ASYNC: " + e);
+        } finally {
+            future.done();
+        }
+    }
+
+    private Histogram merge(List<Histogram> histograms) {
+        Histogram merged = new Histogram(HISTOGRAM_MAX_VALUE, HISTOGRAM_PRECISION);
+        for (Histogram histogram : histograms) {
+            for (HistogramIterationValue value : histogram.allValues()) {
+                long latency = value.getValueIteratedTo();
+                long count = value.getCountAtValueIteratedTo();
+                merged.recordValueWithCount(latency, count);
+            }
+        }
+        return merged;
+    }
+
+    private void printStats(Histogram histogram, long serializedSize, long elapsedTime) {
         long latency50 = histogram.getValueAtPercentile(50);
         long latency90 = histogram.getValueAtPercentile(90);
         long latency95 = histogram.getValueAtPercentile(95);
@@ -132,71 +203,26 @@ public class AsyncJsonClient {
         long queriesPerSecond = histogram.getTotalCount() * 1000000000L / elapsedTime;
 
         StringBuilder values = new StringBuilder();
-        values.append("Channels:                       ").append("TODO").append('\n')
+        values
+                .append("Channels:                       ").append("TODO").append('\n')
                 .append("Outstanding RPCs per Channel:   ").append("TODO").append('\n')
-                .append("Server Payload Size:            ").append("TODO").append('\n')
-                .append("Client Payload Size:            ").append("TODO").append('\n')
-                .append("50%ile Latency (in micros):     ").append(latency50).append('\n')
-                .append("90%ile Latency (in micros):     ").append(latency90).append('\n')
-                .append("95%ile Latency (in micros):     ").append(latency95).append('\n')
-                .append("99%ile Latency (in micros):     ").append(latency99).append('\n')
-                .append("99.9%ile Latency (in micros):   ").append(latency999).append('\n')
-                .append("Maximum Latency (in micros):    ").append(latencyMax).append('\n')
-                .append("QPS:                            ").append(queriesPerSecond).append('\n');
+                .append("Server Payload Size:            ").append(serverPayload).append('\n')
+                .append("Client Payload Size:            ").append(clientPayload).append('\n')
+                .append("50%ile Latency (in micros):     ")
+                .append(latency50).append('\n')
+                .append("90%ile Latency (in micros):     ")
+                .append(latency90).append('\n')
+                .append("95%ile Latency (in micros):     ")
+                .append(latency95).append('\n')
+                .append("99%ile Latency (in micros):     ")
+                .append(latency99).append('\n')
+                .append("99.9%ile Latency (in micros):   ")
+                .append(latency999).append('\n')
+                .append("Maximum Latency (in micros):    ")
+                .append(latencyMax).append('\n')
+                .append("QPS:                            ").append(queriesPerSecond).append('\n')
+                .append("Size of request:                ").append(serializedSize).append('\n');
         System.out.println(values);
-    }
-
-    private class ConnectionTask extends AsyncTask<String, Void, Void> {
-        private Histogram histogram;
-        private HistogramFuture future;
-        private HttpURLConnection connection;
-        private long lastCall = System.nanoTime();
-        private long endTime;
-
-        public ConnectionTask(HttpURLConnection connection, Histogram histogram,
-                              HistogramFuture future, long endTime) {
-            this.connection = connection;
-            this.histogram = histogram;
-            this.future = future;
-            this.endTime = endTime;
-        }
-
-        @Override
-        protected Void doInBackground(String... params) {
-            try {
-                byte simpleRequest[] = params[0].getBytes();
-                connection.setRequestMethod("POST");
-                connection.setDoOutput(true);
-                connection.setFixedLengthStreamingMode(simpleRequest.length);
-
-                lastCall = System.nanoTime();
-                System.out.println("time: " + lastCall + ", end: " + endTime);
-                while (lastCall < endTime) {
-                    OutputStream out = new BufferedOutputStream(connection.getOutputStream());
-                    out.write(simpleRequest);
-                    out.close();
-
-                    InputStream in = new BufferedInputStream(connection.getInputStream());
-                    String response = IOUtils.toString(in);
-                    System.out.println("Reponse: " + response);
-
-                    in.close();
-
-                    long now = System.nanoTime();
-                    histogram.recordValue((now - lastCall) / 1000);
-                    lastCall = now;
-                }
-            } catch (IOException e) {
-                System.out.println("IO EXCEPTION IN ASYNC: " + e);
-            } finally {
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Void nothing) {
-            future.done();
-        }
     }
 
     private static class HistogramFuture implements Future<Histogram> {

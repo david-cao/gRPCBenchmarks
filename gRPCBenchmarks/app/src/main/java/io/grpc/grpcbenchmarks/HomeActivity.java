@@ -13,13 +13,8 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
     }
 
-    public void showProtobufBenchmarks(View v) {
-        Intent intent = new Intent(this, ProtobufBenchmarksActivity.class);
-        startActivity(intent);
-    }
-
-    public void showGrpcBenchmarks(View v) {
-        Intent intent = new Intent(this, GrpcBenchmarksActivity.class);
+    public void showRpcBenchmarks(View v) {
+        Intent intent = new Intent(this, RpcBenchmarksActivity.class);
         startActivity(intent);
     }
 

@@ -47,7 +47,7 @@ import io.grpc.benchmarks.proto.BenchmarkServiceGrpc.BenchmarkServiceStub;
 import io.grpc.benchmarks.proto.Messages.Payload;
 import io.grpc.benchmarks.proto.Messages.SimpleRequest;
 import io.grpc.benchmarks.proto.Messages.SimpleResponse;
-import io.grpc.grpcbenchmarks.GrpcBenchmarkResult;
+import io.grpc.grpcbenchmarks.RpcBenchmarkResult;
 import io.grpc.stub.StreamObserver;
 
 import org.HdrHistogram.Histogram;
@@ -75,7 +75,7 @@ public class AsyncClient {
     /**
      * Start the QPS Client.
      */
-    public GrpcBenchmarkResult run() throws Exception {
+    public RpcBenchmarkResult run() throws Exception {
         if (config == null) {
             return null;
         }
@@ -110,10 +110,11 @@ public class AsyncClient {
         long latency999 = merged.getValueAtPercentile(99.9);
         long latencyMax = merged.getValueAtPercentile(100);
         long queriesPerSecond = merged.getTotalCount() * 1000000000L / elapsedTime;
+        int serializedSize = req.getSerializedSize();
 
-        return new GrpcBenchmarkResult(config.channels, config.outstandingRpcsPerChannel,
+        return new RpcBenchmarkResult(config.channels, config.outstandingRpcsPerChannel,
                 config.serverPayload, config.clientPayload, latency50, latency90, latency95,
-                latency99, latency999, latencyMax, queriesPerSecond);
+                latency99, latency999, latencyMax, queriesPerSecond, serializedSize);
     }
 
     private SimpleRequest newRequest() {
@@ -322,35 +323,6 @@ public class AsyncClient {
             channel.shutdown();
         }
     }
-
-//    static final class BenchmarkJsonStub extends AbstractStub<BenchmarkJsonStub>
-//            implements BenchmarkServiceGrpc.BenchmarkServiceBlockingClient {
-//        static final MethodDescriptor<SimpleRequest, SimpleResponse> METHOD_UNARY_CALL =
-//                MethodDescriptor.create(
-//                        BenchmarkServiceGrpc.METHOD_UNARY_CALL.getType(),
-//                        BenchmarkServiceGrpc.METHOD_UNARY_CALL.getFullMethodName(),
-//                        ProtoUtils.jsonMarshaller(SimpleRequest.getDefaultInstance()),
-//                        ProtoUtils.jsonMarshaller(SimpleResponse.getDefaultInstance()));
-//        protected BenchmarkJsonStub(Channel channel) {
-//            super(channel);
-//        }
-//
-//        protected BenchmarkJsonStub(Channel channel, CallOptions callOptions) {
-//            super(channel, callOptions);
-//        }
-//
-//        @Override
-//        protected BenchmarkJsonStub build(Channel channel, CallOptions callOptions) {
-//            return new BenchmarkJsonStub(channel, callOptions);
-//        }
-//
-//        @Override
-//        public SimpleResponse unaryCall(SimpleRequest request) {
-//            return blockingUnaryCall(
-//                    getChannel(), METHOD_UNARY_CALL, getCallOptions(), request
-//            );
-//        }
-//    }
 
     private static class HistogramFuture implements Future<Histogram> {
         private final Histogram histogram;

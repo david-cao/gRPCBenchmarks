@@ -22,7 +22,7 @@ public class BenchmarkResult {
 
     @Override
     public String toString() {
-        return name + ": serialized size: " + size + "bytes"
+        return "Serialized size: " + size + "bytes"
                 + (compressedSize != 0 ? " (" + compressedSize + "bytes gzipped), " : ", ")
                 + iterations + " iterations in " + (elapsed / 1000f)
                 + "s, ~" + mbps + "Mb/s.";

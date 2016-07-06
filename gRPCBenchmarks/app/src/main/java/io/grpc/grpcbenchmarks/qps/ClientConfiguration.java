@@ -41,7 +41,7 @@ import io.grpc.grpcbenchmarks.Utils;
 import io.grpc.benchmarks.proto.Control.RpcType;
 import io.grpc.benchmarks.proto.Messages;
 import io.grpc.benchmarks.proto.Messages.PayloadType;
-import io.grpc.grpcbenchmarks.TestUtils;
+//import io.grpc.grpcbenchmarks.TestUtils;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -60,7 +60,8 @@ public class ClientConfiguration implements Configuration {
     Transport transport = Transport.OK_HTTP;
     boolean tls;
     boolean testca;
-    String authorityOverride = TestUtils.TEST_SERVER_HOST;
+//    String authorityOverride = TestUtils.TEST_SERVER_HOST;
+    String authorityOverride = "foo.test.google.fr";
     boolean useDefaultCiphers;
     boolean directExecutor;
     SocketAddress address;
@@ -126,9 +127,10 @@ public class ClientConfiguration implements Configuration {
                 if (config.transport != Transport.OK_HTTP
                         && config.testca && config.address instanceof InetSocketAddress) {
                     // Override the socket address with the host from the testca.
-                    InetSocketAddress address = (InetSocketAddress) config.address;
-                    config.address = TestUtils.testServerAddress(address.getHostName(),
-                            address.getPort());
+//                    InetSocketAddress address = (InetSocketAddress) config.address;
+//                    config.address = TestUtils.testServerAddress(address.getHostName(),
+//                            address.getPort());
+                    throw new IllegalArgumentException("No need to use test server on Android.");
                 }
             }
 

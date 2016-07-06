@@ -3,6 +3,7 @@ package io.grpc.grpcbenchmarks;
 import com.google.protobuf.MessageLite;
 
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -81,14 +82,14 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
 
     private void initializeBenchmarks() {
         benchmarks = new ArrayList<>();
-        benchmarks.add(new Benchmark("Serialize protobuf to byte array", "description", 0));
-        benchmarks.add(new Benchmark("Serialize protobuf to CodedOutputStream", "description", 1));
-        benchmarks.add(new Benchmark("Serialize protobuf to ByteArrayOutputStream", "description", 2));
-        benchmarks.add(new Benchmark("Deserialize protobuf from byte array", "description", 3));
-        benchmarks.add(new Benchmark("Deserialize protobuf from CodedInputStream", "description", 4));
-        benchmarks.add(new Benchmark("Deserialize protobuf from ByteArrayInputStream", "description", 5));
-        benchmarks.add(new Benchmark("Serialize JSON to byte array", "description", 6));
-        benchmarks.add(new Benchmark("Deserialize JSON from byte array", "description", 7));
+        benchmarks.add(new Benchmark("Serialize protobuf to byte array", "", 0));
+        benchmarks.add(new Benchmark("Serialize protobuf to CodedOutputStream", "", 1));
+        benchmarks.add(new Benchmark("Serialize protobuf to ByteArrayOutputStream", "", 2));
+        benchmarks.add(new Benchmark("Deserialize protobuf from byte array", "", 3));
+        benchmarks.add(new Benchmark("Deserialize protobuf from CodedInputStream", "", 4));
+        benchmarks.add(new Benchmark("Deserialize protobuf from ByteArrayInputStream", "", 5));
+        benchmarks.add(new Benchmark("Serialize JSON to byte array", "", 6));
+        benchmarks.add(new Benchmark("Deserialize JSON from byte array", "", 7));
     }
 
     public void beginAllBenchmarks(View v) {
@@ -135,7 +136,11 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
 
     public void startBenchmark(CardView cv, Benchmark b) {
         BenchmarkAsyncTask task = new BenchmarkAsyncTask(cv, b);
-        task.execute();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        } else {
+            task.execute();
+        }
     }
 
     //BEGIN OnItemSelectedListener

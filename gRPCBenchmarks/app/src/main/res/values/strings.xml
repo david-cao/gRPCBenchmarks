@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">gRPC Benchmarks Lite</string>
     <string name="protobufBenchmarksName">Protobuf Benchmarks</string>
+    <string name="rpcBenchmarksName">RPC Benchmarks</string>
     <string name="grpcBenchmarksName">gRPC Benchmarks</string>
     <string name="jsonBenchmarksName">JSON Benchmarks</string>
 

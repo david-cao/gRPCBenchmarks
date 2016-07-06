@@ -27,8 +27,11 @@
                 android:name=".GrpcBenchmarksActivity"
                 android:label="@string/grpcBenchmarksName">
         </activity>
-        <activity android:name=".JsonBenchmarkActivity"
-                  android:label="@string/jsonBenchmarksName">
+        <activity
+                android:name=".JsonBenchmarkActivity"
+                android:label="@string/jsonBenchmarksName">
+        </activity>
+        <activity android:name=".RpcBenchmarksActivity">
         </activity>
     </application>
 

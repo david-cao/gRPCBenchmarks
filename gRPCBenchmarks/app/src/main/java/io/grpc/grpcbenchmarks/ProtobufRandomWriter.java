@@ -249,7 +249,6 @@ public class ProtobufRandomWriter {
         return friendsListBuilder.build();
     }
 
-    // TODO: maybe find a way to trim this down...
     public static MessageLite randomProto3(int stringSize, boolean fixed) {
         Random r = new Random();
         return randomProto3(r, stringSize, fixed);

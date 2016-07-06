@@ -11,7 +11,7 @@ public class Routes {
         return (req, res) -> {
             res.status(200);
             res.type("application/json");
-
+            System.out.println("get");
             return "HELLO DAVID";
         };
     }
@@ -19,7 +19,7 @@ public class Routes {
     public static Route postPayload() {
         return (req, res) -> {
             String payload = req.body();
-            System.out.println(payload);
+//            System.out.println(payload);
 
             if (payload != null && payload.length() > 0) {
                 return "{\"payload\":" + payload + "}";

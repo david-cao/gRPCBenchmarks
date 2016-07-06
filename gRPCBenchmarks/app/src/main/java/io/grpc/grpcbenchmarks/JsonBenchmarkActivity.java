@@ -1,6 +1,7 @@
 package io.grpc.grpcbenchmarks;
 
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,13 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.apache.commons.io.IOUtils;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 import io.grpc.grpcbenchmarks.qps.AsyncJsonClient;
@@ -39,66 +33,57 @@ public class JsonBenchmarkActivity extends AppCompatActivity {
     }
 
     public void sendMessage(View v) {
-        String host = mHostEdit.getText().toString();
-        String port = mPortEdit.getText().toString();
-        new CallAPI().execute("http://" + host + ":" + port + "/postPayload", "TEST");
+//        String host = mHostEdit.getText().toString();
+//        String port = mPortEdit.getText().toString();
+//        String urlString = "http://" + host + ":" + port + "/postPayload";
+//        try {
+//            AsyncJsonClient jsonClient = new AsyncJsonClient(new URL(urlString));
+//            jsonClient.run();
+//        } catch (Exception e) {
+//            System.out.println("Exception! " + e);
+//        }
     }
 
     public void beginBenchmark(View v) {
+        String host = mHostEdit.getText().toString();
+        String port = mPortEdit.getText().toString();
+        String urlString = "http://" + host + ":" + port + "/postPayload";
 
+        // We don't want benchmarks to run in parallel, so make sure they are in serial order
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            new CallAPI().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, urlString);
+        } else {
+            new CallAPI().execute(urlString);
+        }
     }
 
     private class CallAPI extends AsyncTask<String, Void, String> {
-
-        public CallAPI() {
+        @Override
+        public void onPreExecute() {
+            mBenchmarkButton.setEnabled(false);
         }
 
         // Format should be url, payload, other params
         @Override
         protected String doInBackground(String... params) {
-            String urlString = params[0];
-            try {
-                AsyncJsonClient jsonClient = new AsyncJsonClient(new URL(urlString));
-                jsonClient.run();
-            } catch (Exception e) {
-                System.out.println("Exception! " + e);
-            } finally {
-                return null;
-            }
-
-//            byte payload[] = params[1].getBytes();
-//
-//            InputStream in;
+//            String result = "";
+//            String urlString = params[0];
 //            try {
-//                URL url = new URL(urlString);
-//
-//                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//                connection.setDoOutput(true);
-////                connection.setChunkedStreamingMode(0);
-//                connection.setFixedLengthStreamingMode(payload.length);
-//
-//                OutputStream out = new BufferedOutputStream(connection.getOutputStream());
-//                out.write(payload);
-//                out.close();
-//
-//                in = new BufferedInputStream(connection.getInputStream());
-//
-//                String response = IOUtils.toString(in);
-//                System.out.println("Reponse: " + response);
-//
-//                connection.disconnect();
-//
-//                return response;
+//                AsyncJsonClient jsonClient = new AsyncJsonClient(new URL(urlString));
+//                RpcBenchmarkResult res = jsonClient.run();
+//                result = res.toString();
 //            } catch (Exception e) {
-//                System.out.println("Connection error: " + e);
-//                return "Error";
+//                System.out.println("Exception! " + e);
+//            } finally {
+//                return result;
 //            }
+            return "blah";
         }
 
         @Override
         protected void onPostExecute(String res) {
+            mBenchmarkButton.setEnabled(true);
             mResultText.setText(res);
         }
     }
-
 }

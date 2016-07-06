@@ -5,6 +5,9 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
 
+    // This is for metrics, no workaround for now?
+//    useLibrary 'org.apache.http.legacy'
+
     sourceSets {
         main {
             proto {
@@ -61,7 +64,6 @@ protobuf {
             task.plugins {
                 grpc {
                     // Options added to --grpc_out
-                    // TODO: make project lite compatible
                     option 'lite'
                 }
             }

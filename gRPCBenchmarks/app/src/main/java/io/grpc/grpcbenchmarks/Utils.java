@@ -156,13 +156,15 @@ public final class Utils {
             if (tls) {
                 SSLSocketFactory factory;
                 if (testca) {
-                    builder.overrideAuthority(
-                            GrpcUtil.authorityFromHostAndPort(authorityOverride, addr.getPort()));
-                    try {
-                        factory = TestUtils.newSslSocketFactoryForCa(TestUtils.loadCert("ca.pem"));
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
+                    factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+                    //TODO: probably remove this stuff, not needed in Android
+//                    builder.overrideAuthority(
+//                            GrpcUtil.authorityFromHostAndPort(authorityOverride, addr.getPort()));
+//                    try {
+//                        factory = TestUtils.newSslSocketFactoryForCa(TestUtils.loadCert("ca.pem"));
+//                    } catch (Exception e) {
+//                        throw new RuntimeException(e);
+//                    }
                 } else {
                     factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
                 }
