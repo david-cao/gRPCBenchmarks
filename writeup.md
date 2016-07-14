@@ -51,7 +51,8 @@ The JSON benchmark uses the same method as the gRPC benchmark.
 
 Results
 -------
-# TODO: Make some pretty visualizations
+TODO: Make some pretty visualizations
+
 Using sheets gives us something like:
 ![Graph of latencies for RPC calls]()
 
