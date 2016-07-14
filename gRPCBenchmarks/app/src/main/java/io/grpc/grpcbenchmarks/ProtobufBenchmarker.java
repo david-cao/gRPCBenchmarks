@@ -157,6 +157,7 @@ public class ProtobufBenchmarker {
                     gis.read(inputData);
                     gis.close();
                     bis.close();
+                    String s = new String(inputData);
                     new JSONObject(new String(inputData));
                 }
             });

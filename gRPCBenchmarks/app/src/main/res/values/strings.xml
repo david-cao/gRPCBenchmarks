@@ -13,8 +13,8 @@
 
     <string-array name="protobuf_benchmarks_array">
         <item>Small request (~15bytes)</item>
-        <item>Address Book (from example ~300bytes)</item>
-        <item>Large newfeed-like protofile (~1kb)</item>
+        <item>Address Book (from example ~500bytes)</item>
+        <item>Large newsfeed-like protofile (~100kb)</item>
         <item>Large generic protofile (~30kb)</item>
         <item>Large string-dense generic protofile (~41kb)</item>
         <item>Large string-sparse generic protofile (~17kb)</item>

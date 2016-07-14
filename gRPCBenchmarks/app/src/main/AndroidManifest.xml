@@ -31,7 +31,8 @@
                 android:name=".JsonBenchmarkActivity"
                 android:label="@string/jsonBenchmarksName">
         </activity>
-        <activity android:name=".RpcBenchmarksActivity">
+        <activity android:name=".RpcBenchmarksActivity"
+                  android:label="@string/rpcBenchmarksName">
         </activity>
     </application>
 

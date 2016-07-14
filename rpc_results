@@ -1,0 +1,85 @@
+gRPC
+Channels:                       1
+Outstanding RPCs per Channel:   1
+Server Payload Size:            100
+Client Payload Size:            100
+50%ile Latency (in micros):     2319
+90%ile Latency (in micros):     4029
+95%ile Latency (in micros):     5739
+99%ile Latency (in micros):     28447
+99.9%ile Latency (in micros):   34783
+Maximum Latency (in micros):    45119
+QPS:                            306
+
+Post to Python BaseHTTPServer
+Starting json benchmarking
+Channels:                       TODO
+Outstanding RPCs per Channel:   TODO
+Server Payload Size:            100
+Client Payload Size:            100
+50%ile Latency (in micros):     37695
+90%ile Latency (in micros):     48479
+95%ile Latency (in micros):     52031
+99%ile Latency (in micros):     58623
+99.9%ile Latency (in micros):   67071
+Maximum Latency (in micros):    78207
+QPS:                            30
+Size of request:                646
+
+POST to Spark server
+Starting json benchmarking
+Channels:                       TODO
+Outstanding RPCs per Channel:   TODO
+Server Payload Size:            100
+Client Payload Size:            100
+50%ile Latency (in micros):     10223
+90%ile Latency (in micros):     21487
+95%ile Latency (in micros):     40543
+99%ile Latency (in micros):     53087
+99.9%ile Latency (in micros):   65855
+Maximum Latency (in micros):    77375
+QPS:                            72
+Size of request:                758
+
+GET to Spark server
+Starting json benchmarking
+Channels:                       TODO
+Outstanding RPCs per Channel:   TODO
+Server Payload Size:            100
+Client Payload Size:            100
+50%ile Latency (in micros):     2655
+90%ile Latency (in micros):     5463
+95%ile Latency (in micros):     18863
+99%ile Latency (in micros):     22591
+99.9%ile Latency (in micros):   28175
+Maximum Latency (in micros):    35167
+QPS:                            239
+Size of request:                772
+
+POST to Apache server
+Channels:                       TODO
+Outstanding RPCs per Channel:   TODO
+Server Payload Size:            100
+Client Payload Size:            100
+50%ile Latency (in micros):     10223
+90%ile Latency (in micros):     26831
+95%ile Latency (in micros):     36607
+99%ile Latency (in micros):     46655
+99.9%ile Latency (in micros):   70207
+Maximum Latency (in micros):    83071
+QPS:                            73
+Size of request:                970
+
+GET to Apache server
+Channels:                       TODO
+Outstanding RPCs per Channel:   TODO
+Server Payload Size:            100
+Client Payload Size:            100
+50%ile Latency (in micros):     2961
+90%ile Latency (in micros):     6807
+95%ile Latency (in micros):     20479
+99%ile Latency (in micros):     26687
+99.9%ile Latency (in micros):   43455
+Maximum Latency (in micros):    54719
+QPS:                            206
+Size of request:                970

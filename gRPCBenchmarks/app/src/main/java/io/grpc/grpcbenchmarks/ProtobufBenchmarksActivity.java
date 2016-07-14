@@ -143,20 +143,18 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
         }
     }
 
-    //BEGIN OnItemSelectedListener
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
-        // An item was selected. You can retrieve the selected item using
-        System.out.println("picked " + pos);
         selected = pos;
+        // prevent gzip for small request, strange bug where GZIP fails to decompress correctly
+        if (selected == 0) {
+            mCheckBox.setChecked(false);
+        }
     }
 
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Another interface callback
-    }
+    public void onNothingSelected(AdapterView<?> parent) {}
 
     private class BenchmarkAsyncTask extends AsyncTask<Integer, Integer, BenchmarkResult> {
-
         CardView cv;
         Benchmark b;
 
@@ -167,6 +165,11 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
 
         @Override
         protected void onPreExecute() {
+            // prevent gzip for small request, strange bug where GZIP fails to decompress correctly
+            if (selected == 0) {
+                mCheckBox.setChecked(false);
+            }
+
             useGzip = mCheckBox.isChecked();
             tasksRunning++;
             mBenchmarkButton.setEnabled(false);
@@ -182,7 +185,6 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
                 MessageLite message;
                 String jsonString;
                 if (sharedMessage != null) {
-                    System.out.println("Using shared message");
                     message = sharedMessage;
                     jsonString = sharedJson;
                 } else {

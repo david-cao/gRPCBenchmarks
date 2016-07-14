@@ -1,0 +1,115 @@
+Using OkHttp:
+
+start benchmark here
+Starting json benchmarking
+Channels:                       TODO
+Outstanding RPCs per Channel:   TODO
+Server Payload Size:            100
+Client Payload Size:            100
+50%ile Latency (in micros):     10047
+90%ile Latency (in micros):     15383
+95%ile Latency (in micros):     20447
+99%ile Latency (in micros):     40031
+99.9%ile Latency (in micros):   71935
+Maximum Latency (in micros):    101503
+QPS:                            86
+Size of request:                970
+start benchmark here
+Starting json benchmarking
+Channels:                       TODO
+Outstanding RPCs per Channel:   TODO
+Server Payload Size:            100
+Client Payload Size:            100
+50%ile Latency (in micros):     10103
+90%ile Latency (in micros):     19439
+95%ile Latency (in micros):     26191
+99%ile Latency (in micros):     47935
+99.9%ile Latency (in micros):   82687
+Maximum Latency (in micros):    103551
+QPS:                            80
+Size of request:                970
+start benchmark here
+Starting json benchmarking
+Channels:                       TODO
+Outstanding RPCs per Channel:   TODO
+Server Payload Size:            100
+Client Payload Size:            100
+50%ile Latency (in micros):     10071
+90%ile Latency (in micros):     18383
+95%ile Latency (in micros):     24879
+99%ile Latency (in micros):     46751
+99.9%ile Latency (in micros):   77887
+Maximum Latency (in micros):    93951
+QPS:                            81
+Size of request:                970
+start benchmark here
+Starting json benchmarking
+Channels:                       TODO
+Outstanding RPCs per Channel:   TODO
+Server Payload Size:            100
+Client Payload Size:            100
+50%ile Latency (in micros):     10103
+90%ile Latency (in micros):     19327
+95%ile Latency (in micros):     25519
+99%ile Latency (in micros):     49727
+99.9%ile Latency (in micros):   79487
+Maximum Latency (in micros):    103167
+QPS:                            80
+Size of request:                970
+
+---------------------START OF HTTPURLCONNECTION STATS----------------------
+
+Starting json benchmarking
+Channels:                       TODO
+Outstanding RPCs per Channel:   TODO
+Server Payload Size:            100
+Client Payload Size:            100
+50%ile Latency (in micros):     10223
+90%ile Latency (in micros):     25055
+95%ile Latency (in micros):     36767
+99%ile Latency (in micros):     47295
+99.9%ile Latency (in micros):   65055
+Maximum Latency (in micros):    76095
+QPS:                            74
+Size of request:                970
+start benchmark here
+Starting json benchmarking
+Channels:                       TODO
+Outstanding RPCs per Channel:   TODO
+Server Payload Size:            100
+Client Payload Size:            100
+50%ile Latency (in micros):     10255
+90%ile Latency (in micros):     25679
+95%ile Latency (in micros):     36159
+99%ile Latency (in micros):     46463
+99.9%ile Latency (in micros):   68863
+Maximum Latency (in micros):    74623
+QPS:                            74
+Size of request:                970
+start benchmark here
+Starting json benchmarking
+Channels:                       TODO
+Outstanding RPCs per Channel:   TODO
+Server Payload Size:            100
+Client Payload Size:            100
+50%ile Latency (in micros):     10287
+90%ile Latency (in micros):     24543
+95%ile Latency (in micros):     36319
+99%ile Latency (in micros):     46367
+99.9%ile Latency (in micros):   66431
+Maximum Latency (in micros):    97919
+QPS:                            73
+Size of request:                970
+Starting json benchmarking
+Channels:                       TODO
+Outstanding RPCs per Channel:   TODO
+Server Payload Size:            100
+Client Payload Size:            100
+50%ile Latency (in micros):     10167
+90%ile Latency (in micros):     27567
+95%ile Latency (in micros):     37343
+99%ile Latency (in micros):     46655
+99.9%ile Latency (in micros):   61855
+Maximum Latency (in micros):    78015
+QPS:                            73
+Size of request:                970

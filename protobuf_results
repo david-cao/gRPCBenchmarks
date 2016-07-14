@@ -1,0 +1,70 @@
+Benchmarks are ordered as follows: 
+Name
+Serialize protobuf to byte array
+Serialize protobuf to CodedOutputStream
+Serialize protobuf to ByteArrayOutputStream
+Deserialize protobuf from byte array
+Deserialize protobuf from CodedInputStream
+Deserialize protobf from ByteArrayInputStream
+Serialize JSON to byte array
+Deserialize JSON from byte array
+
+Small request, no gzip
+Serialized size: 25bytes, 348503 iterations in 9.925s, ~0.8371747Mb/s.
+Serialized size: 25bytes, 1074360 iterations in 9.788s, ~2.6169531Mb/s.
+Serialized size: 25bytes, 398395 iterations in 10.102s, ~0.9402571Mb/s.
+Serialized size: 25bytes, 328830 iterations in 9.819s, ~0.7984436Mb/s.
+Serialized size: 25bytes, 340358 iterations in 9.923s, ~0.8177735Mb/s.
+Serialized size: 25bytes, 45359 iterations in 9.939s, ~0.10880801Mb/s.
+Serialized size: 36bytes, 151844 iterations in 9.989s, ~0.5218891Mb/s.
+Serialized size: 36bytes, 140514 iterations in 10.324s, ~0.46727675Mb/s.
+
+address book no gzip
+Serialized size: 565bytes, 66305 iterations in 10.007s, ~3.5701866Mb/s.
+Serialized size: 565bytes, 78731 iterations in 9.918s, ~4.2773046Mb/s.
+Serialized size: 565bytes, 50180 iterations in 10.096s, ~2.678119Mb/s.
+Serialized size: 565bytes, 10864 iterations in 9.846s, ~0.5945364Mb/s.
+Serialized size: 565bytes, 11209 iterations in 10.132s, ~0.5961015Mb/s.
+Serialized size: 565bytes, 9556 iterations in 9.853s, ~0.52258414Mb/s.
+Serialized size: 2462bytes, 6080 iterations in 10.0s, ~1.4275513Mb/s.
+Serialized size: 2462bytes, 4897 iterations in 10.086s, ~1.1399853Mb/s.
+
+address book gzipped
+Serialized size: 714bytes, 55407 iterations in 9.96s, ~3.7879446Mb/s.
+Serialized size: 714bytes, 66197 iterations in 9.828s, ~4.586395Mb/s.
+Serialized size: 714bytes, 43609 iterations in 9.823s, ~3.0229452Mb/s.
+Serialized size: 714bytes, 8900 iterations in 9.917s, ~0.611094Mb/s.
+Serialized size: 714bytes, 8970 iterations in 9.934s, ~0.61484635Mb/s.
+Serialized size: 714bytes, 7831 iterations in 9.755s, ~0.5466234Mb/s.
+Serialized size: 2889bytes (953bytes gzipped), 3376 iterations in 10.0s, ~0.9301437Mb/s.
+Serialized size: 2889bytes (953bytes gzipped), 3683 iterations in 10.352s, ~0.9802234Mb/s.
+
+Large newsfeed-like protofile no gzip
+Serialized size: 138086bytes, 471 iterations in 9.85s, ~6.29701Mb/s.
+Serialized size: 138086bytes, 496 iterations in 10.412s, ~6.2733173Mb/s.
+Serialized size: 138086bytes, 358 iterations in 9.794s, ~4.8136296Mb/s.
+Serialized size: 138086bytes, 201 iterations in 10.157s, ~2.6060357Mb/s.
+Serialized size: 138086bytes, 202 iterations in 10.178s, ~2.6135972Mb/s.
+Serialized size: 138086bytes, 201 iterations in 10.002s, ~2.6464212Mb/s.
+Serialized size: 178994bytes, 63 iterations in 9.96s, ~1.0797415Mb/s.
+Serialized size: 178994bytes, 56 iterations in 9.904s, ~0.96519697Mb/s.
+
+Large newsfeed-like protofile gzipped
+Serialized size: 168175bytes, 395 iterations in 10.105s, ~6.269347Mb/s.
+Serialized size: 168175bytes, 400 iterations in 9.981s, ~6.4275794Mb/s.
+Serialized size: 168175bytes, 314 iterations in 10.113s, ~4.9797916Mb/s.
+Serialized size: 168175bytes, 159 iterations in 9.912s, ~2.5727487Mb/s.
+Serialized size: 168175bytes, 161 iterations in 9.86s, ~2.6188493Mb/s.
+Serialized size: 168175bytes, 164 iterations in 10.059s, ~2.6148727Mb/s.
+Serialized size: 219484bytes (143719bytes gzipped), 44 iterations in 9.709s, ~0.9485957Mb/s.
+Serialized size: 219484bytes (143719bytes gzipped), 45 iterations in 9.565s, ~0.9847602Mb/s.
+
+Large newsfeed-like protofile gzipped
+Serialized size: 24259bytes, 2664 iterations in 10.147s, ~6.0739264Mb/s.
+Serialized size: 24259bytes, 2655 iterations in 10.044s, ~6.1154838Mb/s.
+Serialized size: 24259bytes, 2034 iterations in 9.98s, ~4.7151275Mb/s.
+Serialized size: 24259bytes, 876 iterations in 9.86s, ~2.0554183Mb/s.
+Serialized size: 24259bytes, 866 iterations in 9.804s, ~2.0435607Mb/s.
+Serialized size: 24259bytes, 878 iterations in 10.079s, ~2.015348Mb/s.
+Serialized size: 58172bytes (26002bytes gzipped), 99 iterations in 9.521s, ~0.57685506Mb/s.
+Serialized size: 58172bytes (26002bytes gzipped), 78 iterations in 10.053s, ~0.43044037Mb/s.

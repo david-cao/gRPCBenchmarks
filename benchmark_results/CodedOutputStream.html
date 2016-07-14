@@ -1,0 +1,39 @@
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+  google.charts.load('current', {
+    'packages': ['corechart']
+  });
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+      ['Mbps', 'Message Size in bytes'],
+      [2.616953255, 25],
+      [4.277304791, 565],
+      [4.872934462, 700],
+      [5.925880617, 40996],
+      [6.273317282, 138086]
+    ]);
+
+    var options = {
+      title: 'Results of Serializing to CodedOutputStream',
+      hAxis: {
+        title: 'Mbps',
+        minValue: 0,
+        maxValue: 5
+      },
+      vAxis: {
+        title: 'Message Size in bytes',
+        minValue: 0,
+        maxValue: 160000
+      },
+      legend: 'none'
+    };
+
+    var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+
+    chart.draw(data, options);
+  }
+
+</script>
+<div id="chart_div" style="width: 900px; height: 500px;"></div>
