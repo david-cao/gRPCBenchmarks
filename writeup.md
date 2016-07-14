@@ -56,7 +56,7 @@ TODO: Make some pretty visualizations
 Using sheets gives us something like:
 ![Graph of latencies for RPC calls](https://github.com/david-cao/gRPCBenchmarks/blob/master/benchmark_results/latencies.png)
 
-Or maybe using google charts, [example here.]()
+Or maybe using google charts, [example here.](https://github.com/david-cao/gRPCBenchmarks/blob/master/benchmark_results/CodedOutputStream.html)
 
 Main issue is that there's lots of things to show, how should we do it?
 
