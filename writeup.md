@@ -92,11 +92,13 @@ $ ./gradlew :grpc-benchmarks:installDist
 ```
 
 **This will be changed once merged**
+Clone this repo
+```
+$ git clone https://github.com/david-cao/gRPCBenchmarks.git
+```
+If you're using Android Studio, simply open the protolite_app project in Android Studio and sync and build.
 
-
-If you're using Android Studio, simply open the project in Android Studio and sync and build.
-
-Otherwise, change directories to the mobile benchmark folder, and run
+Otherwise, change directories to the protolite_app folder, and run
 ```
 $ ./gradlew installDebug
 ```
@@ -116,4 +118,4 @@ The benchmarking app expects for `qps_server` to be running on port 50051.
 
 Once server is up, type in your IP, number of concurrent connections you want (recommended 1), the size of your payload (defaults to 100), and press the play button for the gRPC benchmarks. The benchmarks will take about 70 seconds, 10 for warmup and 60 for the benchmarks.
 
-TODO: write up (and figure out) how to start HTTP server. 
+TODO: write up (and figure out) how to start HTTP server in an easy way.
