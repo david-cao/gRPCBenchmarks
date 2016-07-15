@@ -92,6 +92,7 @@ $ ./gradlew :grpc-benchmarks:installDist
 ```
 
 **This will be changed once merged**
+
 Clone this repo
 ```
 $ git clone https://github.com/david-cao/gRPCBenchmarks.git
