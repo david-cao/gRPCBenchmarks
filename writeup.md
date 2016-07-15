@@ -36,7 +36,7 @@ iteration, seeing if it surpasses a minimum sample time (2 seconds), and
 repeating with 2 * previous number of iterations if it doesn't. If it does, 
 we then guess the number of iterations it would take to run for 10 seconds by 
 doing a little math. The code for this can be seen in 
-[ProtobufBenchmarker.java](/protolite_app/app/src/main/java/io/grpc/grpcbenchmarks/ProtobufBenchmarker.java). 
+[ProtobufBenchmarker.java](/protolite_app/app/src/main/java/io/grpc/grpcbenchmarks/ProtobufBenchmarker.java#L177). 
 
 The same method is used for the JSON equivalent. The JSON benchmarks can also be run using gzip to compress the data after serialization.
 
