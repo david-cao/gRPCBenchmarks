@@ -64,7 +64,7 @@ Main issue is that there's lots of things to show, how should we do it?
 
 ### Protobuf vs. JSON
 
-[Results in text for now]()
+[Results in text for now](/okhttp_results)
 
 [OkHttp results]()
 
