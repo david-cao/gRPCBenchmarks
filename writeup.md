@@ -3,7 +3,7 @@ Mobile gRPC Benchmarks
 This readme outlines the methodology used for the mobile benchmarks, results 
 observed, and instructions to replicate our results. There are two main 
 sections: protobuf (de)serialization benchmarks and gRPC benchmarks. The 
-protobuf benchmarks are run against similar JSON structures, and the gRPC 
+protobuf benchmarks are run against equivalent JSON structures, and the gRPC 
 benchmarks are run against a similar RESTful HTTP service using JSON. 
 
 Methodology
