@@ -91,6 +91,9 @@ $ cd grpc-java/
 $ ./gradlew :grpc-benchmarks:installDist
 ```
 
+**This will be changed once merged**
+
+
 If you're using Android Studio, simply open the project in Android Studio and sync and build.
 
 Otherwise, change directories to the mobile benchmark folder, and run
