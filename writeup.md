@@ -1,4 +1,4 @@
-NOTE: Most links are empty, waiting for merge
+NOTE: Some links are empty, waiting for merge
 
 Mobile gRPC Benchmarks
 ======================
@@ -64,9 +64,9 @@ Main issue is that there's lots of things to show, how should we do it?
 
 ### Protobuf vs. JSON
 
-[Results in text for now](/okhttp_results)
+[Results in text for now](/protobuf_results)
 
-[OkHttp results]()
+[OkHttp results](/okhttp_results)
 
 #### Considerations
 Protobuf needs to calculate the size of its message when serializing in order to allocate a large enough byte array. However, when it's called once it gets cached, thus leading to skewed results with successive runs.
@@ -75,7 +75,7 @@ Gzip is disabled for the "Small request" proto, since it actually increases size
 
 ### gRPC vs. RESTful HTTP JSON API
 
-[Results in text for now]()
+[Results in text for now](/rpc_results)
 
 #### Considerations
 As you can see the results for a POST vs. a GET are drastically different. This is due to the fact that for each POST request done in Android, an output stream needs to be opened, written to, then closed before sending the request. Using Square's OkHttp library makes this a bit better, but still results in a large difference between a gRPC request and a POST request. 
