@@ -53,6 +53,8 @@ Results
 -------
 TODO: Make some pretty visualizations
 
+All benchmarks were run on a Nexus 7 tablet running Android 4.4.4.
+
 Using sheets gives us something like:
 ![Graph of latencies for RPC calls](https://github.com/david-cao/gRPCBenchmarks/blob/master/benchmark_results/latencies.png)
 
