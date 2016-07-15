@@ -40,7 +40,7 @@ public class RpcBenchmark {
                                   String payloadString, String gzip) throws Exception {
         switch (methodNumber) {
             case 0:
-                String address = "--address=" + urlString + ":50052";
+                String address = "--address=" + urlString + ":50051";
                 String[] args = {address, "--channels=1", "--outstanding_rpcs=" + numConnections,
                         "--client_payload=1000", "--server_payload=1000"};
                 ClientConfiguration.Builder configBuilder = ClientConfiguration.newBuilder(
@@ -55,7 +55,7 @@ public class RpcBenchmark {
                 int payloadSize = Integer.parseInt(payloadString);
                 boolean useGzip = Boolean.parseBoolean(gzip);
                 AsyncJsonClient jsonClient = new AsyncJsonClient(new URL("http://" + urlString +
-                        ":4567/postPayload"), outstandingConnections, payloadSize, useGzip);
+                        ":50052/postPayload"), outstandingConnections, payloadSize, useGzip);
                 return useOkHttp ? jsonClient.runOkHttp(): jsonClient.run();
             default:
                 throw new IllegalArgumentException("Invalid method number/tag was" +

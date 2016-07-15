@@ -1,3 +1,5 @@
+NOTE: Most links are empty, waiting for merge
+
 Mobile gRPC Benchmarks
 ======================
 This readme outlines the methodology used for the mobile benchmarks, results 
@@ -80,7 +82,7 @@ As you can see the results for a POST vs. a GET are drastically different. This 
 
 Replicating Results
 -------------------
-TODO: Nothing below is tested...
+TODO: Revise once merged into grpc-java repo
 
 In order to run the benchmarks on your own device, you'll first need to clone the grpc-java repo and build the benchmarks.
 ```
@@ -89,10 +91,26 @@ $ cd grpc-java/
 $ ./gradlew :grpc-benchmarks:installDist
 ```
 
-Then change directories to the mobile benchmark folder, and run
+If you're using Android Studio, simply open the project in Android Studio and sync and build.
+
+Otherwise, change directories to the mobile benchmark folder, and run
 ```
 $ ./gradlew installDebug
 ```
-to build the application. From there use `adb` to run the application on your device.
+to build the application. From there use [`adb`](https://developer.android.com/studio/command-line/adb.html) to run the application on your device.
 
-Alternatively, open the folder in Android Studio and simply sync and build.
+### Benchmarking Protobuf
+First choose the protofile you want to run benchmarks on. You can examine them in more depth [here](). Also choose whether or not to gzip the JSON during benchmarks (gzip is disabled for "Small request", since it adds in size). Then tap the "Run All Benchmarks" button to begin the benchmarks. Each benchmark takes about 15 seconds, 5 for warmup and calculation, and 10 for the actual benchmark. 
+
+Note: If you tap "Run All Benchmarks", the same protofile/JSON object will be used across all benchmarks. If you tap each benchmark individually, a new random protofile/JSON object will be used each time.
+
+### Benchmarking gRPC
+Ensure your Android device can access your computer over the network. This can be done either with USB tethering or a local network. Then start the `qps_server` by running
+```
+$ ./benchmarks/build/install/grpc-benchmarks/bin/qps_server --address=localhost:50051
+```
+The benchmarking app expects for `qps_server` to be running on port 50051. 
+
+Once server is up, type in your IP, number of concurrent connections you want (recommended 1), the size of your payload (defaults to 100), and press the play button for the gRPC benchmarks. The benchmarks will take about 70 seconds, 10 for warmup and 60 for the benchmarks.
+
+TODO: write up (and figure out) how to start HTTP server. 

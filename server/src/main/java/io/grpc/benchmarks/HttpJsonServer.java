@@ -8,6 +8,7 @@ import static spark.Spark.*;
 public class HttpJsonServer {
 
     public static void main(String[] args) {
+        port(50052);
 
         get("/hello", Routes.getPayload());
         post("/postPayload", Routes.postPayload());

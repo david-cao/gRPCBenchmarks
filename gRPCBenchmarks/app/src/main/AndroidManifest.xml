@@ -23,14 +23,6 @@
         <activity
                 android:name=".ProtobufBenchmarksActivity"
                 android:label="@string/protobufBenchmarksName"/>
-        <activity
-                android:name=".GrpcBenchmarksActivity"
-                android:label="@string/grpcBenchmarksName">
-        </activity>
-        <activity
-                android:name=".JsonBenchmarkActivity"
-                android:label="@string/jsonBenchmarksName">
-        </activity>
         <activity android:name=".RpcBenchmarksActivity"
                   android:label="@string/rpcBenchmarksName">
         </activity>
