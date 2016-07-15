@@ -1,5 +1,3 @@
-NOTE: Some links are empty, waiting for merge
-
 Mobile gRPC Benchmarks
 ======================
 This readme outlines the methodology used for the mobile benchmarks, results 
@@ -12,7 +10,7 @@ Methodology
 -----------
 ### Protobuf Benchmarks
 After a user chooses which message to benchmark, an instance with 
-[randomally generated fields]() is instantiated. After a short warmup, the 
+[randomally generated fields](/protolite_app/app/src/main/java/io/grpc/grpcbenchmarks/ProtobufRandomWriter.java) is instantiated. After a short warmup, the 
 message is then either serialized or deserialized over and over until a certain 
 amount of time has passed, ten seconds in this case. In order to keep 
 benchmarks as accurate as possible, we wrap the code to be benchmarked in an interface and simply loop it for a set number of iterations.
@@ -38,7 +36,7 @@ iteration, seeing if it surpasses a minimum sample time (2 seconds), and
 repeating with 2 * previous number of iterations if it doesn't. If it does, 
 we then guess the number of iterations it would take to run for 10 seconds by 
 doing a little math. The code for this can be seen in 
-[ProtobufBenchmarker.java](). 
+[ProtobufBenchmarker.java](/protolite_app/app/src/main/java/io/grpc/grpcbenchmarks/ProtobufBenchmarker.java). 
 
 The same method is used for the JSON equivalent. The JSON benchmarks can also be run using gzip to compress the data after serialization.
 
