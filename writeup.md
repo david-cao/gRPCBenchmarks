@@ -120,4 +120,3 @@ Make sure you're in the `http_server` directory and simply run
 $ ./gradlew run
 ```
 to start the server. From there, everything is the same as the gRPC benchmarks. Benchmarks will also take about 70 seconds, 10 for warmup and 60 for the benchmarks. The app expects the server to be running on port 50052, which is already enabled by default. Make sure nothing is blocking that port before starting the server.
-TODO: write up (and figure out) how to start HTTP server in an easy way.
