@@ -51,20 +51,12 @@ The JSON benchmark uses the same method as the gRPC benchmark.
 
 Results
 -------
-TODO: Make some pretty visualizations
-
 All benchmarks were run on a Nexus 7 tablet running Android 4.4.4.
 
-Using sheets gives us something like:
-![Graph of latencies for RPC calls](https://github.com/david-cao/gRPCBenchmarks/blob/master/benchmark_results/latencies.png)
-
-Or maybe using google charts, [example here.](https://github.com/david-cao/gRPCBenchmarks/blob/master/benchmark_results/CodedOutputStream.html)
-
-Main issue is that there's lots of things to show, how should we do it?
-
 ### Protobuf vs. JSON
+![Comparison of serialization/deserialization speeds of Protobuf and JSON](/benchmark_results/protobuf_speeds.png)
 
-[Results in text for now](/protobuf_results)
+[Raw data](/protobuf_results)
 
 [OkHttp results](/okhttp_results)
 
@@ -74,8 +66,9 @@ Protobuf needs to calculate the size of its message when serializing in order to
 Gzip is disabled for the "Small request" proto, since it actually increases size.
 
 ### gRPC vs. RESTful HTTP JSON API
+![Graph of latencies for RPC calls](/benchmark_results/latencies.png)
 
-[Results in text for now](/rpc_results)
+[Raw data](/rpc_results)
 
 #### Considerations
 As you can see the results for a POST vs. a GET are drastically different. This is due to the fact that for each POST request done in Android, an output stream needs to be opened, written to, then closed before sending the request. Using Square's OkHttp library makes this a bit better, but still results in a large difference between a gRPC request and a POST request. 
