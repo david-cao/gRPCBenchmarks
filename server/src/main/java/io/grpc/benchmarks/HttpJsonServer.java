@@ -12,6 +12,5 @@ public class HttpJsonServer {
 
         get("/hello", Routes.getPayload());
         post("/postPayload", Routes.postPayload());
-
     }
 }
