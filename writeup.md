@@ -54,7 +54,9 @@ Results
 All benchmarks were run on a Nexus 7 tablet running Android 4.4.4.
 
 ### Protobuf vs. JSON
-![Comparison of serialization/deserialization speeds of Protobuf and JSON](/benchmark_results/protobuf_speeds.png)
+![Speeds of Protobuf serialization/deserialiation](/benchmark_results/protobuf_speeds.png)
+
+![Comparison of serialization/deserialization speeds of Protobuf and JSON](/benchmark_results/proto_vs_json.png)
 
 [Raw data](/protobuf_results)
 
