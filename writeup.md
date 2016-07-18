@@ -45,7 +45,7 @@ The gRPC benchmarks are mostly adapted from
 [AsyncClient.java](https://github.com/grpc/grpc-java/blob/master/benchmarks/src/main/java/io/grpc/benchmarks/qps/AsyncClient.java) in the `benchmarks/` folder of the grpc-java repo. Essentially what happens is a channel is opened, a message with a specified payload size is sent, a response with the same payload size is recieved, and we repeat until 60 seconds have passed. Total end to end times are recorded in a historgram (this includes processing time). 
 
 Unlike the protobuf benchmarks, we don't mind if we check or get the time every 
-iteration since the latency of the connection will always overshadow it. 
+iteration since the latency of the connection will always vastly overshadow it. 
 
 The JSON benchmark uses the same method as the gRPC benchmark.
 
@@ -63,7 +63,7 @@ All benchmarks were run on a Nexus 7 tablet running Android 4.4.4.
 [OkHttp results](/okhttp_results)
 
 #### Considerations
-Protobuf needs to calculate the size of its message when serializing in order to allocate a large enough byte array. However, when it's called once it gets cached, thus leading to skewed results with successive runs.
+Protobuf needs to calculate the size of its message when serializing in order to allocate a large enough byte array. However, when it's called once it gets cached, thus leading to skewed results with successive runs. We suspect this could up to double the reported speed. However, the speed at which protobuf serializes is well over 2x than JSON.
 
 Gzip is disabled for the "Small request" proto, since it actually increases size.
 
