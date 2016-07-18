@@ -12,5 +12,7 @@ public class HttpJsonServer {
 
         get("/hello", Routes.getPayload());
         post("/postPayload", Routes.postPayload());
+
+        System.out.println("HTTP server started...");
     }
 }

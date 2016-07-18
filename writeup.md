@@ -101,7 +101,7 @@ $ ./gradlew installDebug
 to build the application. From there use [`adb`](https://developer.android.com/studio/command-line/adb.html) to run the application on your device.
 
 ### Benchmarking Protobuf
-First choose the protofile you want to run benchmarks on. You can examine them in more depth [here](). Also choose whether or not to gzip the JSON during benchmarks (gzip is disabled for "Small request", since it adds in size). Then tap the "Run All Benchmarks" button to begin the benchmarks. Each benchmark takes about 15 seconds, 5 for warmup and calculation, and 10 for the actual benchmark. 
+First choose the protofile you want to run benchmarks on. You can examine them in more depth [here](/protolite_app/app/src/main/proto). Also choose whether or not to gzip the JSON during benchmarks (gzip is disabled for "Small request", since it adds in size). Then tap the "Run All Benchmarks" button to begin the benchmarks. Each benchmark takes about 15 seconds, 5 for warmup and calculation, and 10 for the actual benchmark. 
 
 Note: If you tap "Run All Benchmarks", the same protofile/JSON object will be used across all benchmarks. If you tap each benchmark individually, a new random protofile/JSON object will be used each time.
 
