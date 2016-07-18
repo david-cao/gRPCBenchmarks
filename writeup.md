@@ -117,6 +117,12 @@ $ ./benchmarks/build/install/grpc-benchmarks/bin/qps_server --address=localhost:
 ```
 The benchmarking app expects for `qps_server` to be running on port 50051. 
 
-Once server is up, type in your IP, number of concurrent connections you want (recommended 1), the size of your payload (defaults to 100), and press the play button for the gRPC benchmarks. The benchmarks will take about 70 seconds, 10 for warmup and 60 for the benchmarks.
+Once server is up, type in your IP, number of concurrent connections you want (recommended 1), the size of your payload (defaults to 100 bytes), and press the play button for the gRPC benchmarks. The benchmarks will take about 70 seconds, 10 for warmup and 60 for the benchmarks.
 
+#### Benchmarking HTTP JSON
+Make sure you're in the `http_server` directory and simply run 
+```
+$ ./gradlew run
+```
+to start the server. From there, everything is the same as the gRPC benchmarks. Benchmarks will also take about 70 seconds, 10 for warmup and 60 for the benchmarks. The app expects the server to be running on port 50052, which is already enabled by default. Make sure nothing is blocking that port before starting the server.
 TODO: write up (and figure out) how to start HTTP server in an easy way.

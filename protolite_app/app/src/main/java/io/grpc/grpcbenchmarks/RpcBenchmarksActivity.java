@@ -194,7 +194,11 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
             cv.findViewById(R.id.protobuf_benchmark_start).setEnabled(true);
             cv.findViewById(R.id.protobuf_benchmark_start).setVisibility(View.VISIBLE);
             TextView descrip = (TextView) cv.findViewById(R.id.protobuf_benchmark_description);
-            descrip.setText(result.toString());
+            if (result != null) {
+                descrip.setText(result.toString());
+            } else {
+                descrip.setText("Failed to benchmark. Is server running?");
+            }
 
             if (tasksRunning == 0) {
                 mBenchmarkButton.setEnabled(true);

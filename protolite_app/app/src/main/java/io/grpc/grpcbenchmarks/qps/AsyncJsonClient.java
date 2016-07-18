@@ -44,6 +44,7 @@ import io.grpc.grpcbenchmarks.RpcBenchmarkResult;
 public class AsyncJsonClient {
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final long DURATION = 60 * 1000000000L;
+    private static final long WARMUP_DURATION = 10 * 1000000000L;
 
     private URL url;
     private int outstandingConnections;
@@ -71,6 +72,10 @@ public class AsyncJsonClient {
 
         System.setProperty("http.keepAlive", "true");
 
+        // Run warmups for 10 seconds
+        warmUp(url, simpleRequest, WARMUP_DURATION);
+
+        // Run actual benchmarks
         long startTime = System.nanoTime();
         long endTime = startTime + DURATION;
         List<Histogram> histograms = doBenchmarks(url, simpleRequest, endTime);
@@ -121,6 +126,11 @@ public class AsyncJsonClient {
         return new RpcBenchmarkResult(1, outstandingConnections, serverPayload, clientPayload,
                 latency50, latency90, latency95, latency99, latency999, latencyMax,
                 queriesPerSecond, estimatedHeaderSize);
+    }
+
+    private void warmUp(URL url, String simpleRequest, long duration) throws Exception {
+        long warmupEndTime = System.nanoTime() + duration;
+        doBenchmarks(url, simpleRequest, warmupEndTime);
     }
 
     // Really rough way of getting packet size, since if we wanted to get actual packet size
