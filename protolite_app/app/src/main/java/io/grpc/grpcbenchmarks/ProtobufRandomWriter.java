@@ -190,9 +190,9 @@ public class ProtobufRandomWriter {
         for (int i = 0; i < numPeople; ++i) {
             Person.Builder personBuilder = Person.newBuilder();
             personBuilder
-                    .setName(randomAsciiString(r, 16))
+                    .setName(randomAsciiStringFixed(r, 16))
                     .setId(r.nextInt())
-                    .setEmail(randomAsciiString(r, 30));
+                    .setEmail(randomAsciiStringFixed(r, 30));
             int numPhones = r.nextInt(4) + 1;
             for (int j = 0; j < numPhones; ++j) {
                 personBuilder.addPhones(Person.PhoneNumber
