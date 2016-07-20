@@ -75,7 +75,7 @@ Gzip is disabled for the "Small request" proto, since it actually increases size
 ![Latencies vs Spark using a 100k payload](/benchmark_results/latencies_100k.png)
 
 #### Considerations
-As you can see the results for a POST vs. a GET are drastically different. This is due to the fact that for each POST request done in Android, an output stream needs to be opened, written to, then closed before sending the request. Using Square's OkHttp library makes this a bit better, but still results in a large difference between a gRPC request and a POST request.
+As you can see, the results for a POST vs. a GET are drastically different. This is due to the fact that for each POST request done in Android, an output stream needs to be opened, written to, then closed before sending the request. Using Square's OkHttp library makes this a bit better, but still results in a large difference between a gRPC request and a POST request.
 
 There was a tiny difference between using `HttpURLConnection` and the OkHttp library, but it is almost negligible. You can test it yourself by checking the 'Use OkHttp' box. 
 
@@ -89,8 +89,6 @@ $ git clone https://github.com/grpc/grpc-java.git
 $ cd grpc-java/
 $ ./gradlew :grpc-benchmarks:installDist
 ```
-
-**This will be changed once merged**
 
 Clone this repo
 ```
