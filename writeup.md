@@ -47,7 +47,8 @@ The gRPC benchmarks are mostly adapted from
 Unlike the protobuf benchmarks, we don't mind if we check or get the time every 
 iteration since the latency of the connection will always vastly overshadow it. 
 
-The JSON benchmark uses the same method as the gRPC benchmark.
+#### HTTP JSON Benchmarks
+The JSON benchmark uses the same method as the gRPC benchmark. The server simply reads in the payload and returns it as a response. Various servers were used, such as [Spark](http://sparkjava.com/), Apache, and a basic Python server.
 
 Results
 -------
@@ -58,9 +59,7 @@ All benchmarks were run on a Nexus 7 tablet running Android 4.4.4.
 
 ![Comparison of serialization/deserialization speeds of Protobuf and JSON](/benchmark_results/proto_vs_json.png)
 
-[Raw data](/protobuf_results)
-
-[OkHttp results](/okhttp_results)
+![Comparison of serialization/deserialization speeds of Protobuf and gzipped JSON](/benchmark_results/proto_speeds_gzip.png)
 
 #### Considerations
 Protobuf needs to calculate the size of its message when serializing in order to allocate a large enough byte array. However, when it's called once it gets cached, thus leading to skewed results with successive runs. We suspect this could up to double the reported speed. However, the speed at which protobuf serializes is well over 2x than JSON.
@@ -70,10 +69,15 @@ Gzip is disabled for the "Small request" proto, since it actually increases size
 ### gRPC vs. RESTful HTTP JSON API
 ![Graph of latencies for RPC calls](/benchmark_results/latencies.png)
 
-[Raw data](/rpc_results)
+![Latencies vs Spark using a 250b payload](/benchmark_results/latencies_250.png)
+![Latencies vs Spark using a 2.5k payload](/benchmark_results/latencies_2500.png)
+![Latencies vs Spark using a 50k payload](/benchmark_results/latencies_50k.png)
+![Latencies vs Spark using a 100k payload](/benchmark_results/latencies_100k.png)
 
 #### Considerations
-As you can see the results for a POST vs. a GET are drastically different. This is due to the fact that for each POST request done in Android, an output stream needs to be opened, written to, then closed before sending the request. Using Square's OkHttp library makes this a bit better, but still results in a large difference between a gRPC request and a POST request. 
+As you can see the results for a POST vs. a GET are drastically different. This is due to the fact that for each POST request done in Android, an output stream needs to be opened, written to, then closed before sending the request. Using Square's OkHttp library makes this a bit better, but still results in a large difference between a gRPC request and a POST request.
+
+There was a tiny difference between using `HttpURLConnection` and the OkHttp library, but it is almost negligible. You can test it yourself by checking the 'Use OkHttp' box. 
 
 Replicating Results
 -------------------

@@ -42,7 +42,7 @@ public class RpcBenchmark {
             case 0:
                 String address = "--address=" + urlString + ":50051";
                 String[] args = {address, "--channels=1", "--outstanding_rpcs=" + numConnections,
-                        "--client_payload=1000", "--server_payload=1000"};
+                        "--client_payload=" + payloadString, "--server_payload=" + payloadString};
                 ClientConfiguration.Builder configBuilder = ClientConfiguration.newBuilder(
                         ADDRESS, CHANNELS, OUTSTANDING_RPCS, CLIENT_PAYLOAD, SERVER_PAYLOAD,
                         TLS, TESTCA, USE_DEFAULT_CIPHERS, TRANSPORT, DURATION, WARMUP_DURATION,
