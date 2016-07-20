@@ -69,6 +69,9 @@ Gzip is disabled for the "Small request" proto, since it actually increases size
 ### gRPC vs. RESTful HTTP JSON API
 ![Graph of latencies for RPC calls](/benchmark_results/latencies.png)
 
+<img style="float: right;" src="/benchmark_results/latencies_250.png">
+<img style="float: left;" src="/benchmark_results/latencies_2500.png">
+
 ![Latencies vs Spark using a 250b payload](/benchmark_results/latencies_250.png)
 ![Latencies vs Spark using a 2.5k payload](/benchmark_results/latencies_2500.png)
 ![Latencies vs Spark using a 50k payload](/benchmark_results/latencies_50k.png)
