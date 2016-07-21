@@ -83,11 +83,11 @@ Replicating Results
 -------------------
 TODO: Revise once merged into grpc-java repo
 
-In order to run the benchmarks on your own device, you'll first need to clone the grpc-java repo and build the benchmarks.
+In order to run the benchmarks on your own device, you'll first need to clone and install the grpc-java repo (not necessary for released versions).
 ```
 $ git clone https://github.com/grpc/grpc-java.git
 $ cd grpc-java/
-$ ./gradlew :grpc-benchmarks:installDist
+$ ./gradlew install -PskipCodegen=true
 ```
 
 Clone this repo
@@ -108,6 +108,11 @@ First choose the protofile you want to run benchmarks on. You can examine them i
 Note: If you tap "Run All Benchmarks", the same protofile/JSON object will be used across all benchmarks. If you tap each benchmark individually, a new random protofile/JSON object will be used each time.
 
 ### Benchmarking gRPC
+First, build the benchmark server. From the grc-java directory type
+```
+$ ./gradlew :grpc-benchmarks:installDist
+```
+
 Ensure your Android device can access your computer over the network. This can be done either with USB tethering or a local network. Then start the `qps_server` by running
 ```
 $ ./benchmarks/build/install/grpc-benchmarks/bin/qps_server --address=localhost:50051
