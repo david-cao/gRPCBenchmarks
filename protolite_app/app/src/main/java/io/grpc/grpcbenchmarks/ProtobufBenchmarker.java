@@ -179,6 +179,8 @@ public class ProtobufBenchmarker {
             action.execute();
         }
 
+        System.gc();
+
         int iterations = 1;
         long elapsed = timeAction(action, iterations);
         while (elapsed < MIN_SAMPLE_TIME_MS) {

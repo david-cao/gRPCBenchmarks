@@ -131,6 +131,8 @@ public class AsyncJsonClient {
     private void warmUp(URL url, String simpleRequest, long duration) throws Exception {
         long warmupEndTime = System.nanoTime() + duration;
         doBenchmarks(url, simpleRequest, warmupEndTime);
+
+        System.gc();
     }
 
     // Really rough way of getting packet size, since if we wanted to get actual packet size
