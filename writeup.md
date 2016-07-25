@@ -10,7 +10,7 @@ Methodology
 -----------
 ### Protobuf Benchmarks
 After a user chooses which message to benchmark, an instance with 
-[randomally generated fields](/protolite_app/app/src/main/java/io/grpc/grpcbenchmarks/ProtobufRandomWriter.java) is instantiated. After a short warmup, the 
+[randomally generated fields](/protolite_app/app/src/main/java/io/grpc/grpcbenchmarks/protobufRandomWriter.java) is instantiated. After a short warmup, the 
 message is then either serialized or deserialized over and over until a certain 
 amount of time has passed, ten seconds in this case. In order to keep 
 benchmarks as accurate as possible, we wrap the code to be benchmarked in an interface and simply loop it for a set number of iterations.
@@ -36,7 +36,7 @@ iteration, seeing if it surpasses a minimum sample time (2 seconds), and
 repeating with 2 * previous number of iterations if it doesn't. If it does, 
 we then guess the number of iterations it would take to run for 10 seconds by 
 doing a little math. The code for this can be seen in 
-[ProtobufBenchmarker.java](/protolite_app/app/src/main/java/io/grpc/grpcbenchmarks/ProtobufBenchmarker.java#L177). 
+[protobufBenchmarker.java](/protolite_app/app/src/main/java/io/grpc/grpcbenchmarks/protobufBenchmarker.java#L177). 
 
 The same method is used for the JSON equivalent. The JSON benchmarks can also be run using gzip to compress the data after serialization.
 
@@ -55,11 +55,12 @@ Results
 All benchmarks were run on a Nexus 7 tablet running Android 4.4.4.
 
 ### Protobuf vs. JSON
-![Speeds of Protobuf serialization/deserialiation](/benchmark_results/protobuf_speeds.png)
+The below show how quickly protobuf can serialize/deserialize a messasge of a specific size. The last two compare JSON and gzipped JSON's performance to protobuf's.
+![Speeds of protobuf serialization/deserialiation](/benchmark_results/protobuf_speeds.png)
 
-![Comparison of serialization/deserialization speeds of Protobuf and JSON](/benchmark_results/proto_vs_json.png)
+![Comparison of serialization/deserialization speeds of protobuf and JSON](/benchmark_results/proto_vs_json.png)
 
-![Comparison of serialization/deserialization speeds of Protobuf and gzipped JSON](/benchmark_results/proto_speeds_gzip.png)
+![Comparison of serialization/deserialization speeds of protobuf and gzipped JSON](/benchmark_results/proto_speeds_gzip.png)
 
 #### Considerations
 Protobuf needs to calculate the size of its message when serializing in order to allocate a large enough byte array. However, when it's called once it gets cached, thus leading to skewed results with successive runs. We suspect this could up to double the reported speed. However, the speed at which protobuf serializes is well over 2x than JSON.

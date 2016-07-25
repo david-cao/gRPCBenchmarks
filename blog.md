@@ -1,12 +1,12 @@
-gRPC Mobile Benchmarks
+Mobile gRPC Benchmarks
 ======================
 As gRPC has become a better and faster RPC framework, we've consistently gotten the question, "How _much_ faster is gRPC?" We already have comprehensive server-side benchmarks, but we don't have client-side benchmarks. Benchmarking a client is a bit different than benchmarking a server. We care more about things such as latency, request size, and battery life and less about things like queries per second (QPS) and number of concurrent threads. Thus we built an Android app in order to quantify these factors and provide solid numbers behind them. 
 
-Specifically what we want to benchmark is client side Protobuf vs. JSON serialization/deserialization and gRPC vs. a RESTful HTTP JSON service. For the serialization benchmarks, we want to measure the size of messages and speed at which we serialize and deserialize. For the RPC benchmarks, we want to measure the latency of end-to-end requests, packet size, and battery life drain. 
+Specifically what we want to benchmark is client side protobuf vs. JSON serialization/deserialization and gRPC vs. a RESTful HTTP JSON service. For the serialization benchmarks, we want to measure the size of messages and speed at which we serialize and deserialize. For the RPC benchmarks, we want to measure the latency of end-to-end requests, packet size, and battery life drain. 
 
 Protobuf vs. JSON
 -----------------
-In order to benchmark Protobuf and JSON, we ran serializations and deserializations over and over on randomly generated protos, which can be seen [here](/protolite_app/app/src/main/proto). These protos varied quite a bit in size and complexity, from just a few bytes to over 100kb. JSON equivalents were created and then also benchmarked. For the Protobuf messages, we had three main methods of serializing and deserializing: simply using a byte array, `CodedOutputStream`/`CodedInputStream` which is Protobuf's own implementation of input and output streams, and Java's `ByteArrayOutputStream` and `ByteArrayInputStream`. For JSON we used `org.json`'s [`JSONObject`](https://developer.android.com/reference/org/json/JSONObject.html). This only had one method to serialize and deserialize, `toString()` and `new JSONObject()`, respectively. 
+In order to benchmark protobuf and JSON, we ran serializations and deserializations over and over on randomly generated protos, which can be seen [here](/protolite_app/app/src/main/proto). These protos varied quite a bit in size and complexity, from just a few bytes to over 100kb. JSON equivalents were created and then also benchmarked. For the protobuf messages, we had three main methods of serializing and deserializing: simply using a byte array, `CodedOutputStream`/`CodedInputStream` which is protobuf's own implementation of input and output streams, and Java's `ByteArrayOutputStream` and `ByteArrayInputStream`. For JSON we used `org.json`'s [`JSONObject`](https://developer.android.com/reference/org/json/JSONObject.html). This only had one method to serialize and deserialize, `toString()` and `new JSONObject()`, respectively. 
 
 In order to keep benchmarks as accurate as possible, we wrapped the code to be benchmarked in an interface and simply looped it for a set number of iterations. This way we discounted any time spent checking the system time.
 ```Java
@@ -26,7 +26,7 @@ for (int i = 0; i < 100; ++i) {
     a.execute();
 }
 ```
-Before running a benchmark, we ran a warmup in order to clean out any erratic behaviour by the JVM, and then calculated the number of iterations needed to run for a set time (10 seconds in the Protobuf vs. JSON case). To do this, we started with 1 iteration, measured the time it took for that run, and compared it to a minimum sample time (2 seconds in our case). If the number of iterations took long enough, we estimated the number of iterations needed to run for 10 seconds by doing some math. Otherwise, we multiplied the number of iterations by 2 and repeated.
+Before running a benchmark, we ran a warmup in order to clean out any erratic behaviour by the JVM, and then calculated the number of iterations needed to run for a set time (10 seconds in the protobuf vs. JSON case). To do this, we started with 1 iteration, measured the time it took for that run, and compared it to a minimum sample time (2 seconds in our case). If the number of iterations took long enough, we estimated the number of iterations needed to run for 10 seconds by doing some math. Otherwise, we multiplied the number of iterations by 2 and repeated.
 ```Java
 // This can be found in ProtobufBenchmarker.java benchmark()
 int iterations = 1;
@@ -41,9 +41,9 @@ iterations = (int) ((TARGET_TIME_MS / (double) elapsed) * iterations);
 ```
 
 ### Results
-Benchmarks were run on Protobuf, JSON, and Gzipped JSON.
+Benchmarks were run on protobuf, JSON, and gzipped JSON.
 
-We found that regardless of the serialization/deserialization method used for Protobuf, it was consistently about 3x faster for serializing than JSON. For deserialization, JSON is actually a bit faster for small messages (<1kb), around 1.5x, but for larger messages (>15kb) Protobuf is 2x faster. For Gzipped JSON, Protobuf is well over 5x faster in serialization, regardless of size. For deserialization, both are about the same at small messages, but Protobuf is about 3x faster for larger messages. Results can be explored in more depth and replicated [here](/github_readme).
+We found that regardless of the serialization/deserialization method used for protobuf, it was consistently about 3x faster for serializing than JSON. For deserialization, JSON is actually a bit faster for small messages (<1kb), around 1.5x, but for larger messages (>15kb) protobuf is 2x faster. For gzipped JSON, protobuf is well over 5x faster in serialization, regardless of size. For deserialization, both are about the same at small messages, but protobuf is about 3x faster for larger messages. Results can be explored in more depth and replicated [here](/github_readme).
 
 gRPC vs. HTTP JSON
 ------------------
