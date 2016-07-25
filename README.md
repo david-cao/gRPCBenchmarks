@@ -1,6 +1,6 @@
 Mobile gRPC Benchmarks
 ======================
-Stuff about repo here.
+These tools are what we use to benchmark mobile clients. Here you can find how to replicate our results and explore our results in more detail. Check out the [blog post](link_to_post) as well.
 
 Replicating Results
 -------------------
@@ -36,13 +36,13 @@ First, build the benchmark server. From the grc-java directory type
 $ ./gradlew :grpc-benchmarks:installDist
 ```
 
-Ensure your Android device can access your computer over the network. This can be done either with USB tethering or a local network. Then start the `qps_server` by running
+Ensure your Android device can access your computer over the network. This can be done either with USB tethering or a local network (USB is recommended). Then start the `qps_server` by running
 ```
 $ ./benchmarks/build/install/grpc-benchmarks/bin/qps_server --address=localhost:50051
 ```
 The benchmarking app expects for `qps_server` to be running on port 50051. 
 
-Once server is up, type in your IP, number of concurrent connections you want (recommended 1), the size of your payload (defaults to 100 bytes), and press the play button for the gRPC benchmarks. The benchmarks will take about 70 seconds, 10 for warmup and 60 for the benchmarks.
+Once server is up, input your IP, the number of concurrent connections you want (recommended 1, this only affects the gRPC benchmarks), the size of your payload (defaults to 100 bytes), and press the play button for the gRPC benchmarks. The benchmarks will take about 70 seconds, 10 for warmup and 60 for the benchmarks.
 
 #### Benchmarking HTTP JSON
 Make sure you're in the `http_server` directory and simply run 
@@ -52,7 +52,7 @@ $ ./gradlew run
 to start the server. From there, everything is the same as the gRPC benchmarks. Benchmarks will also take about 70 seconds, 10 for warmup and 60 for the benchmarks. The app expects the server to be running on port 50052, which is already enabled by default. Make sure nothing is blocking that port before starting the server.
 
 ### Using Android Device Monitor
-Since there is no reliable method of getting network packet information client side, we measured bandwidth and things such as that by using Android Device Monitor. 
+Since there is no reliable method of getting network packet information client side, we measured things such as total sent bytes by using [Android Device Monitor](https://developer.android.com/studio/profile/monitor.html). To do this, open the device monitor and make sure that your device is selected. Select the "Network Statistics" tab and make sure you start this before starting a benchmark. This way you can monitor the total number of packets and bytes that your device sends and receives. 
 
 Observed Results
 ----------------
@@ -61,9 +61,7 @@ All benchmarks were run on a Nexus 7 tablet running Android 4.4.4.
 ### Protobuf vs. JSON
 The below show how quickly protobuf can serialize/deserialize a messasge of a specific size. The last two compare JSON and gzipped JSON's performance to protobuf's.
 ![Speeds of protobuf serialization/deserialiation](/benchmark_results/protobuf_speeds.png)
-
 ![Comparison of serialization/deserialization speeds of protobuf and JSON](/benchmark_results/proto_vs_json.png)
-
 ![Comparison of serialization/deserialization speeds of protobuf and gzipped JSON](/benchmark_results/proto_speeds_gzip.png)
 
 ### gRPC vs. HTTP JSON
@@ -83,16 +81,12 @@ Gzip is disabled for the "Small request" proto, since it actually increases size
 ### gRPC and HTTP
 As you can see, the results for a POST vs. a GET are drastically different. This is due to the fact that for each POST request done in Android, an output stream needs to be opened, written to, then closed before sending the request. Using Square's OkHttp library makes this a bit better, but still results in a large difference between a gRPC request and a POST request.
 
-There was a tiny difference between using `HttpURLConnection` and the OkHttp library, but it is almost negligible. You can test it yourself by checking the 'Use OkHttp' box. 
+Moreover, `HttpUrlConnection` does not seem to have a way to reuse the same object for multiple requests. Oracle mentions caching [here](https://docs.oracle.com/javase/6/docs/technotes/guides/net/http-keepalive.html), but it is unclear whether or not this is implemented in Android's SDK.
 
+There was a tiny difference between using `HttpURLConnection` and the OkHttp library, but it is almost negligible. OkHttp seems to be a bit faster for smaller messages, but worse for larger. You can test this yourself by checking the 'Use OkHttp' box. 
 
-
-Protobuf caches size
-
-HTTP benchmarks don't visibly reuse objects, HttpUrlConnection might [Link to oracle thing](), OkHttp vs. HttpUrlConnection. 
-Streams need to be opened/closed for a POST, along with opening a new connection for each iteration
-
-talk about end-to-end, pure networking is basically the same.
+A USB cable was used for our results in order to eliminate any discrepancies from using a wireless network. 
 
 Contributing
 ------------
+__What goes here?__

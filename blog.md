@@ -1,3 +1,5 @@
+Links will need to be changed once repo is merged.
+
 Mobile gRPC Benchmarks
 ======================
 As gRPC has become a better and faster RPC framework, we've consistently gotten the question, "How _much_ faster is gRPC?" We already have comprehensive server-side benchmarks, but we don't have client-side benchmarks. Benchmarking a client is a bit different than benchmarking a server. We care more about things such as latency, request size, and battery life and less about things like queries per second (QPS) and number of concurrent threads. Thus we built an Android app in order to quantify these factors and provide solid numbers behind them. 
@@ -6,7 +8,7 @@ Specifically what we want to benchmark is client side protobuf vs. JSON serializ
 
 Protobuf vs. JSON
 -----------------
-In order to benchmark protobuf and JSON, we ran serializations and deserializations over and over on randomly generated protos, which can be seen [here](/protolite_app/app/src/main/proto). These protos varied quite a bit in size and complexity, from just a few bytes to over 100kb. JSON equivalents were created and then also benchmarked. For the protobuf messages, we had three main methods of serializing and deserializing: simply using a byte array, `CodedOutputStream`/`CodedInputStream` which is protobuf's own implementation of input and output streams, and Java's `ByteArrayOutputStream` and `ByteArrayInputStream`. For JSON we used `org.json`'s [`JSONObject`](https://developer.android.com/reference/org/json/JSONObject.html). This only had one method to serialize and deserialize, `toString()` and `new JSONObject()`, respectively. 
+In order to benchmark protobuf and JSON, we ran serializations and deserializations over and over on randomly generated protos, which can be seen [here](https://github.com/david-cao/gRPCBenchmarks/tree/master/protolite_app/app/src/main/proto). These protos varied quite a bit in size and complexity, from just a few bytes to over 100kb. JSON equivalents were created and then also benchmarked. For the protobuf messages, we had three main methods of serializing and deserializing: simply using a byte array, `CodedOutputStream`/`CodedInputStream` which is protobuf's own implementation of input and output streams, and Java's `ByteArrayOutputStream` and `ByteArrayInputStream`. For JSON we used `org.json`'s [`JSONObject`](https://developer.android.com/reference/org/json/JSONObject.html). This only had one method to serialize and deserialize, `toString()` and `new JSONObject()`, respectively. 
 
 In order to keep benchmarks as accurate as possible, we wrapped the code to be benchmarked in an interface and simply looped it for a set number of iterations. This way we discounted any time spent checking the system time.
 ```Java
@@ -90,11 +92,12 @@ stub.unaryCall(request, new StreamObserver<SimpleResponse>() {
     }
 });
 ```
+Both `HttpUrlConnection` and the [OkHttp library](https://square.github.io/okhttp/) were used.
 
 TODO: Mention streaming?
 Streaming wasn't compared since it's an HTTP/2 specific feature (and since it blew HTTP JSON out of the water!)
 
 ### Results
-In terms of latency, gRPC is 5x-10x faster up to the 95th percentile, with averages of around 2 milliseconds for an end-to-end request. For bandwidth, gRPC is about 3x faster for small requests (100-1000 byte payload), and consistently 2x faster for large requests (10kb-100kb payload). To replicate these results or explore in more depth, check out our [repository]().
+In terms of latency, gRPC is 5x-10x faster up to the 95th percentile, with averages of around 2 milliseconds for an end-to-end request. For bandwidth, gRPC is about 3x faster for small requests (100-1000 byte payload), and consistently 2x faster for large requests (10kb-100kb payload). To replicate these results or explore in more depth, check out our [repository](/github_readme).
 
 TODO: Battery measurements?
