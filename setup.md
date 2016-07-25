@@ -73,18 +73,18 @@ Below shows the latencies for various different servers and/or HTTP methods.
 These graphs show how latency is affected by size of payload.
 <div style="display: inline-block;">
     <div style="display: inline-block;">
-        <img style="max-width: 100%; height: auto; width: auto\9;" src=/benchmark_results/latencies_250.png />
+        <img style="max-width: 50%; height: auto; width: auto\9;" src=/benchmark_results/latencies_250.png />
     </div>
     <div style="display: inline-block;">
-        <img style="max-width: 100%; height: auto; width: auto\9;" src=/benchmark_results/latencies_2500.png />
+        <img style="max-width: 50%; height: auto; width: auto\9;" src=/benchmark_results/latencies_2500.png />
     </div>
 </div>
 <div style="display: inline-block;">
     <div style="display: inline-block;">
-        <img style="max-width: 100%; height: auto; width: auto\9;" src=/benchmark_results/latencies_50k.png />
+        <img style="max-width: 50%; height: auto; width: auto\9;" src=/benchmark_results/latencies_50k.png />
     </div>
     <div style="display: inline-block;">
-        <img style="max-width: 100%; height: auto; width: auto\9;" src=/benchmark_results/latencies_100k.png />
+        <img style="max-width: 50%; height: auto; width: auto\9;" src=/benchmark_results/latencies_100k.png />
     </div>
 </div>
 
