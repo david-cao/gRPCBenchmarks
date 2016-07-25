@@ -6,10 +6,14 @@ Replicating Results
 -------------------
 TODO: Revise once merged into grpc-java repo
 
-In order to run the benchmarks on your own device, you'll first need to clone and install the grpc-java repo (not necessary for released versions).
+In order to run the benchmarks on your own device, you'll first need to clone the grpc-java repo.
 ```
 $ git clone https://github.com/grpc/grpc-java.git
 $ cd grpc-java/
+```
+
+Then install gRPC Java (not necessary for released versions).
+```
 $ ./gradlew install -PskipCodegen=true
 ```
 
