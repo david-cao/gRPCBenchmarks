@@ -60,7 +60,7 @@ Since there is no reliable method of getting network packet information client s
 
 Observed Results
 ----------------
-All benchmarks were run on a Nexus 7 tablet running Android 4.4.4.
+Below are the results from our own benchmarks. All benchmarks were run on a Nexus 7 tablet running Android 4.4.4.
 
 ### Protobuf vs. JSON
 The below show how quickly protobuf can serialize/deserialize a messasge of a specific size. The last two compare JSON and gzipped JSON's performance to protobuf's.
