@@ -70,6 +70,9 @@ The below show how quickly protobuf can serialize/deserialize a messasge of a sp
 Below shows the latencies for various different servers and/or HTTP methods.
 ![Graph of latencies for RPC calls](/benchmark_results/latencies.png)
 
+![Latencies vs Spark using a 250b payload](/benchmark_results/latencies_250.png) ![Latencies vs Spark using a 2.5k payload](/benchmark_results/latencies_2500.png)
+![Latencies vs Spark using a 50k payload](/benchmark_results/latencies_50k.png) ![Latencies vs Spark using a 100k payload](/benchmark_results/latencies_100k.png)
+
 These graphs show how latency is affected by size of payload.
 <div style="display: inline-block;">
     <div style="display: inline-block;">
