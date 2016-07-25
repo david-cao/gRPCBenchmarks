@@ -71,23 +71,7 @@ Below shows the latencies for various different servers and/or HTTP methods.
 ![Graph of latencies for RPC calls](/benchmark_results/latencies.png)
 
 These graphs show how latency is affected by size of payload.
-<div>
-    <div>
-        <img width=3000 src=/benchmark_results/latencies_250.png />
-    </div>
-    <div>
-        <img width=3000 src=/benchmark_results/latencies_2500.png />
-    </div>
-</div>
-<div>
-    <div>
-        <img width=3000 src=/benchmark_results/latencies_50k.png />
-    </div>
-    <div>
-        <img width=3000 src=/benchmark_results/latencies_100k.png />
-    </div>
-</div>
-
+![Latencies vs Spark using various payload sizes](/benchmark_results/all_latencies.png)
 
 Considerations
 --------------
