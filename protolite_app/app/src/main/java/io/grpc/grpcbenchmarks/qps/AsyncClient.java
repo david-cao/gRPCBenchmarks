@@ -31,9 +31,9 @@
 
 package io.grpc.grpcbenchmarks.qps;
 
-import static io.grpc.grpcbenchmarks.Utils.HISTOGRAM_MAX_VALUE;
-import static io.grpc.grpcbenchmarks.Utils.HISTOGRAM_PRECISION;
-import static io.grpc.grpcbenchmarks.Utils.saveHistogram;
+import static io.grpc.grpcbenchmarks.qps.Utils.HISTOGRAM_MAX_VALUE;
+import static io.grpc.grpcbenchmarks.qps.Utils.HISTOGRAM_PRECISION;
+import static io.grpc.grpcbenchmarks.qps.Utils.saveHistogram;
 
 import com.google.common.base.Preconditions;
 import com.google.protobuf.ByteString;
@@ -110,11 +110,10 @@ public class AsyncClient {
         long latency999 = merged.getValueAtPercentile(99.9);
         long latencyMax = merged.getValueAtPercentile(100);
         long queriesPerSecond = merged.getTotalCount() * 1000000000L / elapsedTime;
-        int serializedSize = req.getSerializedSize();
 
         return new RpcBenchmarkResult(config.channels, config.outstandingRpcsPerChannel,
                 config.serverPayload, config.clientPayload, latency50, latency90, latency95,
-                latency99, latency999, latencyMax, queriesPerSecond, serializedSize);
+                latency99, latency999, latencyMax, queriesPerSecond);
     }
 
     private SimpleRequest newRequest() {

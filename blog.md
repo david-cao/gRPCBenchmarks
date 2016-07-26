@@ -2,9 +2,9 @@ TODO: Links will need to be changed once repo is merged.
 
 Mobile gRPC Benchmarks
 ======================
-As gRPC has become a better and faster RPC framework, we've consistently gotten the question, "How _much_ faster is gRPC?" We already have comprehensive server-side benchmarks, but we don't have client-side benchmarks. Benchmarking a client is a bit different than benchmarking a server. We care more about things such as latency, request size, and battery life and less about things like queries per second (QPS) and number of concurrent threads. Thus we built an Android app in order to quantify these factors and provide solid numbers behind them. 
+As gRPC has become a better and faster RPC framework, we've consistently gotten the question, "How _much_ faster is gRPC?" We already have comprehensive server-side benchmarks, but we don't have mobile benchmarks. Benchmarking a client is a bit different than benchmarking a server. We care more about things such as latency and request size and less about things like queries per second (QPS) and number of concurrent threads. Thus we built an Android app in order to quantify these factors and provide solid numbers behind them. 
 
-Specifically what we want to benchmark is client side protobuf vs. JSON serialization/deserialization and gRPC vs. a RESTful HTTP JSON service. For the serialization benchmarks, we want to measure the size of messages and speed at which we serialize and deserialize. For the RPC benchmarks, we want to measure the latency of end-to-end requests, packet size, and battery life drain. 
+Specifically what we want to benchmark is client side protobuf vs. JSON serialization/deserialization and gRPC vs. a RESTful HTTP JSON service. For the serialization benchmarks, we want to measure the size of messages and speed at which we serialize and deserialize. For the RPC benchmarks, we want to measure the latency of end-to-end requests and packet size.
 
 Protobuf vs. JSON
 -----------------
@@ -49,7 +49,7 @@ We found that regardless of the serialization/deserialization method used for pr
 
 gRPC vs. HTTP JSON
 ------------------
-To benchmark RPC calls, we want to measure end-to-end latency, bandwidth size, and battery usage. To do this, we ping pong with a server for 60 seconds, using the same message each time, and measure the latency and message size. The message consists of some fields for the server to read, and a payload of bytes. We compared gRPC's unary call to a simple RESTful HTTP JSON service. The gRPC benchmark creates a channel, and starts a unary call that repeats when it recieves a response until 60 seconds have passed. The response contains a proto with the same payload sent.
+To benchmark RPC calls, we want to measure end-to-end latency and bandwidth. To do this, we ping pong with a server for 60 seconds, using the same message each time, and measure the latency and message size. The message consists of some fields for the server to read, and a payload of bytes. We compared gRPC's unary call to a simple RESTful HTTP JSON service. The gRPC benchmark creates a channel, and starts a unary call that repeats when it recieves a response until 60 seconds have passed. The response contains a proto with the same payload sent.
 
 Similarly for the HTTP JSON benchmarks, it sends a POST request to the server with an equivalent JSON object, and the server sends back a JSON object with the same payload.
 ```Java
@@ -94,8 +94,7 @@ stub.unaryCall(request, new StreamObserver<SimpleResponse>() {
 ```
 Both `HttpUrlConnection` and the [OkHttp library](https://square.github.io/okhttp/) were used.
 
-TODO: Mention streaming?
-Streaming wasn't compared since it's an HTTP/2 specific feature (and since it blew HTTP JSON out of the water!)
+Only gRPC's unary calls were benchmarked against HTTP, since streaming calls were over 2x faster than the unary calls. Moreover, HTTP has no equivalent of streaming, which is an HTTP/2 specific feature.
 
 ### Results
 In terms of latency, gRPC is 5x-10x faster up to the 95th percentile, with averages of around 2 milliseconds for an end-to-end request. For bandwidth, gRPC is about 3x faster for small requests (100-1000 byte payload), and consistently 2x faster for large requests (10kb-100kb payload). To replicate these results or explore in more depth, check out our [repository](/github_readme).

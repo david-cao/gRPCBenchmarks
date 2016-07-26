@@ -157,6 +157,7 @@ public class ProtobufBenchmarker {
                     gis.read(inputData);
                     gis.close();
                     bis.close();
+                    // simulate reading from input
                     String s = new String(inputData);
                     new JSONObject(new String(inputData));
                 }
@@ -191,8 +192,7 @@ public class ProtobufBenchmarker {
         iterations = (int) ((TARGET_TIME_MS / (double) elapsed) * iterations);
         elapsed = timeAction(action, iterations);
         float mbps = (iterations * dataSize) / (elapsed * 1024 * 1024 / 1000f);
-        BenchmarkResult res = new BenchmarkResult(name, iterations, elapsed, mbps, dataSize);
-        return res;
+        return new BenchmarkResult(name, iterations, elapsed, mbps, dataSize);
     }
 
     private static long timeAction(Action action, int iterations) throws Exception {

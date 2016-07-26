@@ -29,7 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.grpc.grpcbenchmarks;
+package io.grpc.grpcbenchmarks.qps;
 
 import java.net.SocketAddress;
 

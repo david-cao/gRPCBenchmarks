@@ -93,5 +93,5 @@ A USB cable was used for our results in order to eliminate any discrepancies fro
 
 Contributing
 ------------
-If you have any thoughts on what we did, or wish to contribute your own benchmark results, please let us know! 
+If you have any thoughts on what we did, or wish to contribute your own benchmark results, please let us know! We're still looking for battery benchmarks, as there is no standard way to measure this.
 __What should go here?__

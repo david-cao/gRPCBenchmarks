@@ -31,15 +31,12 @@
 
 package io.grpc.grpcbenchmarks.qps;
 
-import static io.grpc.grpcbenchmarks.Utils.parseBoolean;
+import static io.grpc.grpcbenchmarks.qps.Utils.parseBoolean;
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 
 import io.grpc.ManagedChannel;
-import io.grpc.grpcbenchmarks.Transport;
-import io.grpc.grpcbenchmarks.Utils;
 import io.grpc.benchmarks.proto.Control.RpcType;
-import io.grpc.benchmarks.proto.Messages;
 import io.grpc.benchmarks.proto.Messages.PayloadType;
 //import io.grpc.grpcbenchmarks.TestUtils;
 
@@ -60,7 +57,6 @@ public class ClientConfiguration implements Configuration {
     Transport transport = Transport.OK_HTTP;
     boolean tls;
     boolean testca;
-//    String authorityOverride = TestUtils.TEST_SERVER_HOST;
     String authorityOverride = "foo.test.google.fr";
     boolean useDefaultCiphers;
     boolean directExecutor;
@@ -69,7 +65,6 @@ public class ClientConfiguration implements Configuration {
     int outstandingRpcsPerChannel = 10;
     int serverPayload;
     int clientPayload;
-    //  int flowControlWindow = Utils.DEFAULT_FLOW_CONTROL_WINDOW;
     // seconds
     int duration = 60;
     // seconds
@@ -83,12 +78,7 @@ public class ClientConfiguration implements Configuration {
     }
 
     public ManagedChannel newChannel() throws IOException {
-        return Utils.newClientChannel(transport, address, tls,
-                testca, authorityOverride, directExecutor);
-    }
-
-    public Messages.SimpleRequest newRequest() {
-        return Utils.makeRequest(payloadType, clientPayload, serverPayload);
+        return Utils.newClientChannel(transport, address, tls, authorityOverride, directExecutor);
     }
 
     /**
@@ -126,10 +116,6 @@ public class ClientConfiguration implements Configuration {
 
                 if (config.transport != Transport.OK_HTTP
                         && config.testca && config.address instanceof InetSocketAddress) {
-                    // Override the socket address with the host from the testca.
-//                    InetSocketAddress address = (InetSocketAddress) config.address;
-//                    config.address = TestUtils.testServerAddress(address.getHostName(),
-//                            address.getPort());
                     throw new IllegalArgumentException("No need to use test server on Android.");
                 }
             }
@@ -239,13 +225,6 @@ public class ClientConfiguration implements Configuration {
                 config.rpcType = RpcType.STREAMING;
             }
         },
-        //    FLOW_CONTROL_WINDOW("BYTES", "The HTTP/2 flow control window.",
-//        "" + DEFAULT.flowControlWindow) {
-//      @Override
-//      protected void setClientValue(ClientConfiguration config, String value) {
-//        config.flowControlWindow = parseInt(value);
-//      }
-//    },
         TARGET_QPS("INT", "Average number of QPS to shoot for.", "" + DEFAULT.targetQps, true) {
             @Override
             protected void setClientValue(ClientConfiguration config, String value) {

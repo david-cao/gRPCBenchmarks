@@ -27,7 +27,6 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
     List<Benchmark> benchmarks;
 
     private Button mBenchmarkButton;
-    private Spinner mSpinner;
     private CheckBox mCheckBox;
 
     private MessageLite sharedMessage;
@@ -45,7 +44,7 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
         mCheckBox = (CheckBox) findViewById(R.id.protobuf_benchmarks_gzipcheck);
 
         // set up spinner
-        mSpinner = (Spinner) findViewById(R.id.protobuf_benchmarks_spinner);
+        Spinner mSpinner = (Spinner) findViewById(R.id.protobuf_benchmarks_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.protobuf_benchmarks_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

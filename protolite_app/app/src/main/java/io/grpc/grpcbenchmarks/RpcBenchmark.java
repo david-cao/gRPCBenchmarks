@@ -36,12 +36,12 @@ public class RpcBenchmark {
         this.methodNumber = methodNumber;
     }
 
-    public RpcBenchmarkResult run(boolean useOkHttp, String urlString, String numConnections,
-                                  String payloadString, String gzip) throws Exception {
+    public RpcBenchmarkResult run(boolean useOkHttp, String urlString, String payloadString,
+                                  String gzip) throws Exception {
         switch (methodNumber) {
             case 0:
                 String address = "--address=" + urlString + ":50051";
-                String[] args = {address, "--channels=1", "--outstanding_rpcs=" + numConnections,
+                String[] args = {address, "--channels=1", "--outstanding_rpcs=1",
                         "--client_payload=" + payloadString, "--server_payload=" + payloadString};
                 ClientConfiguration.Builder configBuilder = ClientConfiguration.newBuilder(
                         ADDRESS, CHANNELS, OUTSTANDING_RPCS, CLIENT_PAYLOAD, SERVER_PAYLOAD,
@@ -51,12 +51,11 @@ public class RpcBenchmark {
                 AsyncClient client = new AsyncClient(config);
                 return client.run();
             case 1:
-                int outstandingConnections = Integer.parseInt(numConnections);
                 int payloadSize = Integer.parseInt(payloadString);
                 boolean useGzip = Boolean.parseBoolean(gzip);
                 AsyncJsonClient jsonClient = new AsyncJsonClient(new URL("http://" + urlString +
-                        ":50052/postPayload"), outstandingConnections, payloadSize, useGzip);
-                return useOkHttp ? jsonClient.runOkHttp(): jsonClient.run();
+                        ":50052/postPayload"), payloadSize, useGzip);
+                return jsonClient.run(useOkHttp);
             default:
                 throw new IllegalArgumentException("Invalid method number/tag was" +
                         " used for RpcBenchmark!");

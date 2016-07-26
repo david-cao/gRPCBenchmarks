@@ -28,7 +28,6 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
 
     private Button mBenchmarkButton;
     private EditText mHostEditText;
-    private EditText mConnectionsEditText;
     private Button mPingButton;
     private TextView mPingTextView;
     private CheckBox mGzip;
@@ -42,7 +41,6 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
 
         mBenchmarkButton = (Button) findViewById(R.id.rpc_benchmarks_button);
         mHostEditText = (EditText) findViewById(R.id.host_edit_text);
-        mConnectionsEditText = (EditText) findViewById(R.id.connections_edit_text);
         mPingButton = (Button) findViewById(R.id.ping_button);
         mPingTextView = (TextView) findViewById(R.id.ping_text_view);
         mGzip = (CheckBox) findViewById(R.id.gzip_json_checkbox);
@@ -86,7 +84,6 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
 
     public void startBenchmark(CardView cv, RpcBenchmark b) {
         String host = mHostEditText.getText().toString();
-        String numConnections = mConnectionsEditText.getText().toString();
         String payloadSize = mPayloadEditText.getText().toString();
         String useGzip = Boolean.toString(mGzip.isChecked());
         String useOkHttp = Boolean.toString(mOkHttp.isChecked());
@@ -97,10 +94,10 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
 
         BenchmarkAsyncTask task = new BenchmarkAsyncTask(cv, b);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, host, numConnections,
-                    payloadSize, useGzip, useOkHttp);
+            task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, host, payloadSize,
+                    useGzip, useOkHttp);
         } else {
-            task.execute(host, numConnections, payloadSize, useGzip, useOkHttp);
+            task.execute(host, payloadSize, useGzip, useOkHttp);
         }
     }
 
@@ -144,9 +141,8 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
                 }
             } catch (Exception e) {
                 System.out.println("failed to ping");
-                return "Failed to ping host.";
             }
-            return null;
+            return "Failed to ping host.";
         }
 
         @Override
@@ -178,8 +174,8 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
         @Override
         protected RpcBenchmarkResult doInBackground(String... args) {
             try {
-                boolean useOkHttp = Boolean.parseBoolean(args[4]);
-                RpcBenchmarkResult res = b.run(useOkHttp, args[0], args[1], args[2], args[3]);
+                boolean useOkHttp = Boolean.parseBoolean(args[3]);
+                RpcBenchmarkResult res = b.run(useOkHttp, args[0], args[1], args[2]);
                 return res;
             } catch (Exception e) {
                 System.out.println("Exception while running benchmarks: " + e);

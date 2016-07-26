@@ -37,7 +37,7 @@ public class ProtobufRandomWriter {
         return randomAsciiStringFixed(r, len);
     }
 
-    // These catches should techinically never be happening, since
+    // These catches should techinically never be happening
     public static String protoToJsonString0(MessageLite m) {
         SmallRequest s = (SmallRequest) m;
         JSONObject json = new JSONObject();
