@@ -24,16 +24,13 @@
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                <LinearLayout android:layout_weight="3"
-                              android:layout_width="0dp"
-                              android:layout_height="wrap_content">
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
                     <EditText
                             android:id="@+id/host_edit_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Enter Host Name/IP" />
-                </LinearLayout>
             </LinearLayout>
 
             <EditText android:id="@+id/payload_edit_text"
@@ -71,6 +68,7 @@
                           android:layout_height="match_parent"
                           android:text="Ping results"
                           android:layout_marginLeft="16dp"
+                          android:layout_marginStart="16dp"
                           android:gravity="center"/>
             </LinearLayout>
 

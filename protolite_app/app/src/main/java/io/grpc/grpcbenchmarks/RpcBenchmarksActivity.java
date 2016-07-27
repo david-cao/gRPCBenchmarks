@@ -48,10 +48,10 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
         mPayloadEditText = (EditText) findViewById(R.id.payload_edit_text);
 
         // set up benchmark cards
-        initializeBenchmarks();
+        initializeBenchmarkCards();
     }
 
-    private void initializeBenchmarks() {
+    private void initializeBenchmarkCards() {
         benchmarks = new ArrayList<>();
         benchmarks.add(new RpcBenchmark("gRPC benchmarks", "", 0));
         benchmarks.add(new RpcBenchmark("HTTP JSON benchmarks", "", 1));
@@ -88,7 +88,8 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
         String useGzip = Boolean.toString(mGzip.isChecked());
         String useOkHttp = Boolean.toString(mOkHttp.isChecked());
 
-        if (payloadSize == null || payloadSize.length() == 0) {
+        // set default payload size
+        if (payloadSize.length() == 0) {
             payloadSize = "100";
         }
 
@@ -117,7 +118,7 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
     private class PingAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected void onPreExecute() {
-            mPingTextView.setText("Pinging host...");
+            mPingTextView.setText(R.string.pingRunning);
             mPingButton.setEnabled(false);
         }
 
@@ -175,8 +176,7 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
         protected RpcBenchmarkResult doInBackground(String... args) {
             try {
                 boolean useOkHttp = Boolean.parseBoolean(args[3]);
-                RpcBenchmarkResult res = b.run(useOkHttp, args[0], args[1], args[2]);
-                return res;
+                return b.run(useOkHttp, args[0], args[1], args[2]);
             } catch (Exception e) {
                 System.out.println("Exception while running benchmarks: " + e);
             }
@@ -193,7 +193,7 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
             if (result != null) {
                 descrip.setText(result.toString());
             } else {
-                descrip.setText("Failed to benchmark. Is server running?");
+                descrip.setText(R.string.benchmarkError);
             }
 
             if (tasksRunning == 0) {

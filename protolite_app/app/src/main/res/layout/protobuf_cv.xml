@@ -18,9 +18,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/protobuf_benchmark_progress"
+            android:layout_toStartOf="@+id/protobuf_benchmark_progress"
             android:textSize="24sp"
             android:textColor="@android:color/primary_text_light"
             android:text="Benchmark Title Here"
@@ -31,12 +34,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_below="@+id/protobuf_benchmark_title"
             android:layout_toLeftOf="@+id/protobuf_benchmark_progress"
+            android:layout_toStartOf="@+id/protobuf_benchmark_progress"
             android:textSize="18sp"
             android:textColor="@android:color/secondary_text_light"
-            android:text="Description goes here"
+            android:text="Results go here"
             />
 
         <ProgressBar
@@ -44,6 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_margin="8dp"
             android:layout_centerVertical="true"
             style="@android:style/Widget.ProgressBar.Small.Inverse"
@@ -54,9 +61,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:src="@android:drawable/ic_media_play"
             android:background="@color/clear"
+            android:contentDescription="Start benchmark button"
             />
 
     </RelativeLayout>

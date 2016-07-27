@@ -24,7 +24,6 @@ import java.util.List;
 
 public class ProtobufBenchmarksActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     List<CardView> cardViews;
-    List<Benchmark> benchmarks;
 
     private Button mBenchmarkButton;
     private CheckBox mCheckBox;
@@ -52,7 +51,20 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
         mSpinner.setOnItemSelectedListener(this);
 
         // set up benchmark cards
-        initializeBenchmarks();
+        initializeBenchmarkCards();
+    }
+
+    private void initializeBenchmarkCards() {
+        List<Benchmark> benchmarks = new ArrayList<>();
+        benchmarks.add(new Benchmark("Serialize protobuf to byte array", "", 0));
+        benchmarks.add(new Benchmark("Serialize protobuf to CodedOutputStream", "", 1));
+        benchmarks.add(new Benchmark("Serialize protobuf to ByteArrayOutputStream", "", 2));
+        benchmarks.add(new Benchmark("Deserialize protobuf from byte array", "", 3));
+        benchmarks.add(new Benchmark("Deserialize protobuf from CodedInputStream", "", 4));
+        benchmarks.add(new Benchmark("Deserialize protobuf from ByteArrayInputStream", "", 5));
+        benchmarks.add(new Benchmark("Serialize JSON to byte array", "", 6));
+        benchmarks.add(new Benchmark("Deserialize JSON from byte array", "", 7));
+
         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
         LinearLayout l = (LinearLayout) findViewById(R.id.protobuf_benchmark_cardlayoutlinear);
         cardViews = new ArrayList<>();
@@ -77,18 +89,6 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
             cardViews.add(cv);
             l.addView(cv);
         }
-    }
-
-    private void initializeBenchmarks() {
-        benchmarks = new ArrayList<>();
-        benchmarks.add(new Benchmark("Serialize protobuf to byte array", "", 0));
-        benchmarks.add(new Benchmark("Serialize protobuf to CodedOutputStream", "", 1));
-        benchmarks.add(new Benchmark("Serialize protobuf to ByteArrayOutputStream", "", 2));
-        benchmarks.add(new Benchmark("Deserialize protobuf from byte array", "", 3));
-        benchmarks.add(new Benchmark("Deserialize protobuf from CodedInputStream", "", 4));
-        benchmarks.add(new Benchmark("Deserialize protobuf from ByteArrayInputStream", "", 5));
-        benchmarks.add(new Benchmark("Serialize JSON to byte array", "", 6));
-        benchmarks.add(new Benchmark("Deserialize JSON from byte array", "", 7));
     }
 
     public void beginAllBenchmarks(View v) {

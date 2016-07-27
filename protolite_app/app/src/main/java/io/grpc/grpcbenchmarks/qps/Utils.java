@@ -31,13 +31,7 @@
 
 package io.grpc.grpcbenchmarks.qps;
 
-
-import com.google.protobuf.ByteString;
-
 import io.grpc.ManagedChannel;
-import io.grpc.benchmarks.proto.Messages;
-import io.grpc.benchmarks.proto.Messages.Payload;
-import io.grpc.benchmarks.proto.Messages.SimpleRequest;
 import io.grpc.okhttp.OkHttpChannelBuilder;
 
 import org.HdrHistogram.Histogram;
@@ -136,23 +130,4 @@ public final class Utils {
             }
         }
     }
-
-    /**
-     * Construct a {@link SimpleRequest} with the specified dimensions.
-     */
-    public static SimpleRequest makeRequest(Messages.PayloadType payloadType, int reqLength,
-                                            int respLength) {
-        ByteString body = ByteString.copyFrom(new byte[reqLength]);
-        Payload payload = Payload.newBuilder()
-                .setType(payloadType)
-                .setBody(body)
-                .build();
-
-        return SimpleRequest.newBuilder()
-                .setResponseType(payloadType)
-                .setResponseSize(respLength)
-                .setPayload(payload)
-                .build();
-    }
-
 }

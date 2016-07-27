@@ -22,12 +22,20 @@ public class ProtobufBenchmarker {
 
     public static BenchmarkResult serializeProtobufToByteArray(final MessageLite msg)
             throws Exception {
-        final MessageLite clonedMessage = msg.getDefaultInstanceForType().toBuilder().mergeFrom(msg).build();
+        final MessageLite clonedMessage = msg
+                .getDefaultInstanceForType()
+                .toBuilder()
+                .mergeFrom(msg)
+                .build();
         int serializedSize = msg.getSerializedSize();
         return benchmark("Serialize protobuf to byte array", serializedSize, new Action() {
             @Override
             public void execute() {
-                MessageLite test = clonedMessage.getDefaultInstanceForType().toBuilder().mergeFrom(clonedMessage).build();
+                MessageLite test = clonedMessage
+                        .getDefaultInstanceForType()
+                        .toBuilder()
+                        .mergeFrom(clonedMessage)
+                        .build();
                 test.toByteArray();
             }
         });
@@ -103,7 +111,8 @@ public class ProtobufBenchmarker {
                 });
     }
 
-    public static BenchmarkResult serializeJsonToByteArray(final String jsonString, boolean gzip) throws Exception {
+    public static BenchmarkResult serializeJsonToByteArray(final String jsonString,
+                                                           boolean gzip) throws Exception {
         final int serializedSize = jsonString.getBytes().length;
         final JSONObject jsonObject = new JSONObject(jsonString);
 
@@ -114,7 +123,8 @@ public class ProtobufBenchmarker {
             gos.close();
             bos.close();
 
-            BenchmarkResult res = benchmark("JSON serialize to byte array (gzip)", serializedSize, new Action() {
+            BenchmarkResult res = benchmark("JSON serialize to byte array (gzip)",
+                    serializedSize, new Action() {
                 @Override
                 public void execute() throws IOException {
                     ByteArrayOutputStream bos = new ByteArrayOutputStream(serializedSize);
@@ -137,7 +147,8 @@ public class ProtobufBenchmarker {
         }
     }
 
-    public static BenchmarkResult deserializeJsonfromByteArray(final String jsonString, boolean gzip) throws Exception {
+    public static BenchmarkResult deserializeJsonfromByteArray(final String jsonString,
+                                                               boolean gzip) throws Exception {
         final int serializedSize = jsonString.getBytes().length;
 
         if (gzip) {
@@ -148,7 +159,8 @@ public class ProtobufBenchmarker {
             bos.close();
             final byte[] compressedData = bos.toByteArray();
 
-            BenchmarkResult res = benchmark("JSON deserialize from byte array (gzip)", serializedSize, new Action() {
+            BenchmarkResult res = benchmark("JSON deserialize from byte array (gzip)",
+                    serializedSize, new Action() {
                 @Override
                 public void execute() throws JSONException, IOException {
                     ByteArrayInputStream bis = new ByteArrayInputStream(compressedData);
@@ -158,7 +170,6 @@ public class ProtobufBenchmarker {
                     gis.close();
                     bis.close();
                     // simulate reading from input
-                    String s = new String(inputData);
                     new JSONObject(new String(inputData));
                 }
             });
@@ -175,7 +186,8 @@ public class ProtobufBenchmarker {
         }
     }
 
-    private static BenchmarkResult benchmark(String name, long dataSize, Action action) throws Exception {
+    private static BenchmarkResult benchmark(String name, long dataSize, Action action)
+            throws Exception {
         for (int i = 0; i < 100; ++i) {
             action.execute();
         }

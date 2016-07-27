@@ -99,7 +99,6 @@ public class AsyncJsonClient {
         System.gc();
     }
 
-    // TODO: Make this like the actual gRPC benchmark
     private String newJsonRequest() throws JSONException {
         JSONObject simpleRequest = new JSONObject();
         JSONObject payload = new JSONObject();
@@ -117,7 +116,8 @@ public class AsyncJsonClient {
 
     private Histogram doBenchmarks(URL url, String simpleRequest,
                                    long endTime) throws Exception {
-        //TODO (davidcao): possibly some checks here if we have different types of calls (unlikely)
+        // TODO (davidcao): possibly some checks here if we ever have the need
+        // for different types of calls (unlikely)
         Histogram histogram = new Histogram(HISTOGRAM_MAX_VALUE, HISTOGRAM_PRECISION);
 
         doPosts(histogram, url, simpleRequest, endTime);
