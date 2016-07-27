@@ -27,5 +27,4 @@ public class BenchmarkResult {
                 + iterations + " iterations in " + (elapsed/1000f)
                 + "s, ~" + mbps + "Mb/s.";
     }
-
 }

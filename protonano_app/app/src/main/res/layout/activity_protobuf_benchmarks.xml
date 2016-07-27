@@ -27,7 +27,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:prompt="@string/protobuf_spinner_prompt"></Spinner>
+            android:prompt="@string/protobuf_spinner_prompt"/>
         <CheckBox
             android:id="@+id/protobuf_benchmarks_gzipcheck"
             android:layout_width="wrap_content"
