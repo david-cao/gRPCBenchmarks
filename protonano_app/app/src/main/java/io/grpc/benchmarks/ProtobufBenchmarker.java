@@ -17,52 +17,13 @@ import java.util.zip.GZIPOutputStream;
  * Largely taken from com.google.protobuf/benchmarks
  */
 
-//TODO: Properly figure out how to handle exceptions (AKA no more `throws Exception`)
-
 public class ProtobufBenchmarker {
 
     private static final long MIN_SAMPLE_TIME_MS = 2 * 1000;
     private static final long TARGET_TIME_MS = 10 * 1000;
 
-    public static void main(String[] args) {
-
-    }
-
-    //Modular benchmarks, return a BenchmarkResult for displaying to user.
-    public static BenchmarkResult serializeProtobufToByteArray(final MessageNano message, boolean gzip) throws Exception {
-        final int serializedSize = message.getSerializedSize();
-
-        if (gzip) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(message.getSerializedSize());
-            GZIPOutputStream gos = new GZIPOutputStream(bos);
-            gos.write(MessageNano.toByteArray(message));
-            gos.close();
-            bos.close();
-
-            BenchmarkResult res = benchmark("Serialize to byte array (gzip)", serializedSize, new Action() {
-                @Override
-                public void execute() throws IOException {
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream(serializedSize);
-                    GZIPOutputStream gos = new GZIPOutputStream(bos);
-                    gos.write(MessageNano.toByteArray(message));
-                    gos.close();
-                    bos.close();
-                    bos.toByteArray();
-                }
-            });
-            res.compressedSize = bos.toByteArray().length;
-            return res;
-        } else {
-            return benchmark("Serialize to byte array", serializedSize, new Action() {
-                @Override
-                public void execute() {
-                    MessageNano.toByteArray(message);
-                }
-            });
-        }
-    }
-
-    public static BenchmarkResult serializeProtobufToByteArray(final MessageNano message) throws Exception {
+    public static BenchmarkResult serializeProtobufToByteArray(final MessageNano message)
+            throws Exception {
         final int serializedSize = message.getSerializedSize();
         return benchmark("Serialize to byte array", serializedSize, new Action() {
             @Override
@@ -72,11 +33,11 @@ public class ProtobufBenchmarker {
         });
     }
 
-    //TODO: This is probably expensive, is there another way to do this?
-    //TODO: Is gzip possible here?
-    public static BenchmarkResult serializeProtobufToByteBuffer(final MessageNano message) throws Exception {
+    public static BenchmarkResult serializeProtobufToByteBuffer(final MessageNano message)
+            throws Exception {
         final int serializedSize = message.getSerializedSize();
-        return benchmark("Serialize to CodedOutputByteBufferNano", message.getSerializedSize(), new Action() {
+        return benchmark("Serialize to CodedOutputByteBufferNano", message.getSerializedSize(),
+                new Action() {
             @Override
             public void execute() throws IOException {
                 message.writeTo(CodedOutputByteBufferNano.newInstance(new byte[serializedSize]));
@@ -84,45 +45,8 @@ public class ProtobufBenchmarker {
         });
     }
 
-    //TODO: Figure out a better way to do this?
-    public static BenchmarkResult deserializeProtobufFromByteArray(final MessageNano message, boolean gzip) throws Exception {
-        final int serializedSize = message.getSerializedSize();
-
-        if (gzip) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(serializedSize);
-            GZIPOutputStream gos = new GZIPOutputStream(bos);
-            gos.write(MessageNano.toByteArray(message));
-            gos.close();
-            bos.close();
-            final byte[] compressedData = bos.toByteArray();
-
-            BenchmarkResult res = benchmark("Deserialize from byte array (gzip)", serializedSize, new Action() {
-                @Override
-                public void execute() throws Exception {
-                    //TODO: Figure out best practices
-                    ByteArrayInputStream bis = new ByteArrayInputStream(compressedData);
-                    GZIPInputStream gis = new GZIPInputStream(bis, serializedSize);
-                    byte[] inputData = new byte[serializedSize];
-                    gis.read(inputData);
-                    gis.close();
-                    bis.close();
-                    MessageNano.mergeFrom(message.getClass().newInstance(), inputData);
-                }
-            });
-            res.compressedSize = compressedData.length;
-            return res;
-        } else {
-            final byte inputData[] = MessageNano.toByteArray(message);
-            return benchmark("Deserialize from byte array", serializedSize, new Action() {
-                @Override
-                public void execute() throws Exception {
-                    MessageNano.mergeFrom(message.getClass().newInstance(), inputData);
-                }
-            });
-        }
-    }
-
-    public static BenchmarkResult deserializeProtobufFromByteArray(final MessageNano message) throws Exception {
+    public static BenchmarkResult deserializeProtobufFromByteArray(final MessageNano message)
+            throws Exception {
         final int serializedSize = message.getSerializedSize();
         final byte inputData[] = MessageNano.toByteArray(message);
         return benchmark("Deserialize from byte array", serializedSize, new Action() {
@@ -133,7 +57,8 @@ public class ProtobufBenchmarker {
         });
     }
 
-    public static BenchmarkResult serializeJsonToByteArray(final String jsonString, boolean gzip) throws Exception {
+    public static BenchmarkResult serializeJsonToByteArray(final String jsonString, boolean gzip)
+            throws Exception {
         final int serializedSize = jsonString.getBytes().length;
         final JSONObject jsonObject = new JSONObject(jsonString);
 
@@ -144,7 +69,8 @@ public class ProtobufBenchmarker {
             gos.close();
             bos.close();
 
-            BenchmarkResult res = benchmark("JSON serialize to byte array (gzip)", serializedSize, new Action() {
+            BenchmarkResult res = benchmark("JSON serialize to byte array (gzip)", serializedSize,
+                    new Action() {
                 @Override
                 public void execute() throws IOException {
                     ByteArrayOutputStream bos = new ByteArrayOutputStream(serializedSize);
@@ -167,7 +93,8 @@ public class ProtobufBenchmarker {
         }
     }
 
-    public static BenchmarkResult deserializeJsonfromByteArray(final String jsonString, boolean gzip) throws Exception {
+    public static BenchmarkResult deserializeJsonfromByteArray(final String jsonString,
+                                                               boolean gzip) throws Exception {
         final int serializedSize = jsonString.getBytes().length;
 
         if (gzip) {
@@ -178,7 +105,8 @@ public class ProtobufBenchmarker {
             bos.close();
             final byte[] compressedData = bos.toByteArray();
 
-            BenchmarkResult res = benchmark("JSON deserialize from byte array (gzip)", serializedSize, new Action() {
+            BenchmarkResult res = benchmark("JSON deserialize from byte array (gzip)",
+                    serializedSize, new Action() {
                 @Override
                 public void execute() throws JSONException, IOException {
                     ByteArrayInputStream bis = new ByteArrayInputStream(compressedData);
@@ -218,8 +146,7 @@ public class ProtobufBenchmarker {
         iterations = (int) ((TARGET_TIME_MS / (double) elapsed) * iterations);
         elapsed = timeAction(action, iterations);
         float mbps = (iterations * dataSize) / (elapsed * 1024 * 1024 / 1000f);
-        BenchmarkResult res = new BenchmarkResult(name, iterations, elapsed, mbps, dataSize);
-        return res;
+        return new BenchmarkResult(name, iterations, elapsed, mbps, dataSize);
     }
 
     private static long timeAction(Action action, int iterations) throws Exception {

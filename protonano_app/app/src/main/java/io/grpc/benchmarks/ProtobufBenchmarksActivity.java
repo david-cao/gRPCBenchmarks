@@ -3,6 +3,7 @@ package io.grpc.benchmarks;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,10 +23,8 @@ import java.util.List;
 
 public class ProtobufBenchmarksActivity extends Activity implements AdapterView.OnItemSelectedListener {
     List<CardView> cardViews;
-    List<Benchmark> benchmarks;
 
     private Button mBenchmarkButton;
-    private Spinner mSpinner;
     private CheckBox mCheckBox;
 
     private MessageNano sharedMessage;
@@ -43,7 +42,7 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
         mCheckBox = (CheckBox) findViewById(R.id.protobuf_benchmarks_gzipcheck);
 
         // set up spinner
-        mSpinner = (Spinner) findViewById(R.id.protobuf_benchmarks_spinner);
+        Spinner mSpinner = (Spinner) findViewById(R.id.protobuf_benchmarks_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.protobuf_benchmarks_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -51,14 +50,25 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
         mSpinner.setOnItemSelectedListener(this);
 
         // set up benchmark cards
-        initializeBenchmarks();
+        initializeBenchmarkCards();
+    }
+
+    private void initializeBenchmarkCards() {
+        List<Benchmark> benchmarks = new ArrayList<>();
+        benchmarks.add(new Benchmark("Serialize to byte array", "description", 0));
+        benchmarks.add(new Benchmark("Serialize to CodedOutputByteBufferNano", "description", 1));
+        benchmarks.add(new Benchmark("Deserialize from byte array", "description", 2));
+        benchmarks.add(new Benchmark("JSON serialize to byte array", "description", 3));
+        benchmarks.add(new Benchmark("JSON deserialize from byte array", "description", 4));
+
         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
         LinearLayout l = (LinearLayout) findViewById(R.id.protobuf_benchmark_cardlayoutlinear);
         cardViews = new ArrayList<>();
 
         for (final Benchmark b: benchmarks) {
             final CardView cv = (CardView) inflater.inflate(R.layout.protobuf_cv, l, false);
-            cv.setCardBackgroundColor(getResources().getColor(R.color.cardview_light_background));
+            cv.setCardBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+                    R.color.cardview_light_background));
             TextView tv = (TextView) cv.findViewById(R.id.protobuf_benchmark_title);
             TextView descrip = (TextView) cv.findViewById(R.id.protobuf_benchmark_description);
             ImageButton button = (ImageButton) cv.findViewById(R.id.protobuf_benchmark_start);
@@ -74,15 +84,6 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
             cardViews.add(cv);
             l.addView(cv);
         }
-    }
-
-    private void initializeBenchmarks() {
-        benchmarks = new ArrayList<>();
-        benchmarks.add(new Benchmark("Serialize to byte array", "description", 0));
-        benchmarks.add(new Benchmark("Serialize to CodedOutputByteBufferNano", "description", 1));
-        benchmarks.add(new Benchmark("Deserialize from byte array", "description", 2));
-        benchmarks.add(new Benchmark("JSON serialize to byte array", "description", 3));
-        benchmarks.add(new Benchmark("JSON deserialize from byte array", "description", 4));
     }
 
     public void beginAllBenchmarks(View v) {
@@ -125,19 +126,14 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
         task.execute();
     }
 
-    //BEGIN OnItemSelectedListener
+    // OnItemSelectedListener
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
-        // An item was selected. You can retrieve the selected item using
         System.out.println("picked " + pos);
         selected = pos;
     }
 
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Another interface callback
-    }
-
-// ************************************************************************************************
+    public void onNothingSelected(AdapterView<?> parent) {}
 
     private class Benchmark {
         String title;

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">gRPC Benchmarks</string>
+    <string name="app_name">(Nano) gRPC Benchmarks</string>
     <string name="protobuf_spinner_prompt">Pick a proto to benchmark</string>
     <string name="allBenchmarksButtonEnabled">Run All Benchmarks</string>
     <string name="allBenchmarksButtonDisabled">Benchmarks are running...</string>
