@@ -6,6 +6,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import io.grpc.benchmarks.Attributes;
 import io.grpc.benchmarks.FriendsList;
@@ -21,6 +23,7 @@ import io.grpc.benchmarks.Person;
  * Created by davidcao on 6/13/16.
  */
 public class ProtobufRandomWriter {
+    private static final Logger logger = Logger.getLogger(ProtobufRandomWriter.class.getName());
 
     private static String randomAsciiStringFixed(Random r, int len) {
         char s[] = new char[len];
@@ -37,6 +40,42 @@ public class ProtobufRandomWriter {
         return randomAsciiStringFixed(r, len);
     }
 
+    public static MessageLite randomProto(ProtoEnum protoEnum) {
+        switch (protoEnum) {
+            case SMALL_REQUEST:
+                return ProtobufRandomWriter.randomProto0();
+            case ADDRESS_BOOK:
+                return ProtobufRandomWriter.randomProto1();
+            case NEWSFEED:
+                return ProtobufRandomWriter.randomProto2();
+            case LARGE:
+                return ProtobufRandomWriter.randomProto3(60, false);
+            case LARGE_DENSE:
+                return ProtobufRandomWriter.randomProto3(60, true);
+            case LARGE_SPARSE:
+                return ProtobufRandomWriter.randomProto3(10, true);
+            default:
+                return ProtobufRandomWriter.randomProto0();
+        }
+    }
+
+    public static String protoToJsonString(ProtoEnum protoEnum, MessageLite message) {
+        switch (protoEnum) {
+            case SMALL_REQUEST:
+                return ProtobufRandomWriter.protoToJsonString0(message);
+            case ADDRESS_BOOK:
+                return ProtobufRandomWriter.protoToJsonString1(message);
+            case NEWSFEED:
+                return ProtobufRandomWriter.protoToJsonString2(message);
+            case LARGE:
+            case LARGE_DENSE:
+            case LARGE_SPARSE:
+                return ProtobufRandomWriter.protoToJsonString3(message);
+            default:
+                return ProtobufRandomWriter.protoToJsonString0(message);
+        }
+    }
+
     // These catches should techinically never be happening
     public static String protoToJsonString0(MessageLite m) {
         SmallRequest s = (SmallRequest) m;
@@ -45,7 +84,7 @@ public class ProtobufRandomWriter {
             json.put("name", s.getName());
             return json.toString();
         } catch (JSONException e) {
-            System.out.println("Failed to parse JSON: " + e);
+            logger.log(Level.WARNING, "Failed to parse JSON: " + e);
             return null;
         }
     }
@@ -69,7 +108,7 @@ public class ProtobufRandomWriter {
             }
             return json.toString();
         } catch (JSONException e) {
-            System.out.println("Failed to parse JSON: " + e);
+            logger.log(Level.WARNING, "Failed to parse JSON: " + e);
             return null;
         }
     }
@@ -106,7 +145,7 @@ public class ProtobufRandomWriter {
             }
             return friendsListJson.toString();
         } catch (JSONException e) {
-            System.out.println("Failed to parse JSON: " + e);
+            logger.log(Level.WARNING, "Failed to parse JSON: " + e);
             return null;
         }
     }
@@ -140,7 +179,7 @@ public class ProtobufRandomWriter {
             }
             return thingsJson.toString();
         } catch (JSONException e) {
-            System.out.println("Failed to parse JSON: " + e);
+            logger.log(Level.WARNING, "Failed to parse JSON: " + e);
             return null;
         }
     }
@@ -164,7 +203,7 @@ public class ProtobufRandomWriter {
                     .put("Double2", a.getDouble2())
                     .put("Double3", a.getDouble3());
         } catch (JSONException e) {
-            System.out.println("Failed to create attributes: " + e);
+            logger.log(Level.WARNING, "Failed to translate proto to JSON: " + e);
         }
         return jsonAttribute;
     }
@@ -299,26 +338,5 @@ public class ProtobufRandomWriter {
                 .setDouble2(r.nextDouble())
                 .setDouble3(r.nextDouble());
         return attributeBuilder.build();
-    }
-
-    // Below are used for testing
-    public static MessageLite randomProto0(long seed) {
-        Random r = new Random(seed);
-        return randomProto0(r);
-    }
-
-    public static MessageLite randomProto1(long seed) {
-        Random r = new Random(seed);
-        return randomProto1(r);
-    }
-
-    public static MessageLite randomProto2(long seed) {
-        Random r = new Random(seed);
-        return randomProto2(r);
-    }
-
-    public static MessageLite randomProto3(long seed, int stringSize, boolean fixed) {
-        Random r = new Random(seed);
-        return randomProto3(r, stringSize, fixed);
     }
 }

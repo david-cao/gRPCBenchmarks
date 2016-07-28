@@ -45,7 +45,9 @@ iterations = (int) ((TARGET_TIME_MS / (double) elapsed) * iterations);
 ### Results
 Benchmarks were run on protobuf, JSON, and gzipped JSON.
 
-We found that regardless of the serialization/deserialization method used for protobuf, it was consistently about 3x faster for serializing than JSON. For deserialization, JSON is actually a bit faster for small messages (<1kb), around 1.5x, but for larger messages (>15kb) protobuf is 2x faster. For gzipped JSON, protobuf is well over 5x faster in serialization, regardless of size. For deserialization, both are about the same at small messages, but protobuf is about 3x faster for larger messages. Results can be explored in more depth and replicated [here](/github_readme).
+In general, any JSON equivalent of a protobuf message is 2-3x larger in size, and usually the around the same size when gzipped.
+
+We found that regardless of the serialization/deserialization method used for protobuf, it was consistently about 3x faster for serializing than JSON. For deserialization, JSON is actually a bit faster for small messages (<1kb), around 1.5x, but for larger messages (>15kb) protobuf is 2-3x faster. For gzipped JSON, protobuf is well over 5x faster in serialization, regardless of size. For deserialization, both are about the same at small messages, but protobuf is about 3x faster for larger messages. Results can be explored in more depth and replicated [here](/github_readme).
 
 gRPC vs. HTTP JSON
 ------------------

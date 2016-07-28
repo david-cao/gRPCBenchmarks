@@ -39,6 +39,25 @@ public class ProtobufRandomWriter {
         return randomAsciiStringFixed(r, len);
     }
 
+    public static MessageNano randomProto(ProtoEnum protoEnum) {
+        switch (protoEnum) {
+            case SMALL_REQUEST:
+                return ProtobufRandomWriter.randomProto0();
+            case ADDRESS_BOOK:
+                return ProtobufRandomWriter.randomProto1();
+            case NEWSFEED:
+                return ProtobufRandomWriter.randomProto2();
+            case LARGE:
+                return ProtobufRandomWriter.randomProto3(60, false);
+            case LARGE_DENSE:
+                return ProtobufRandomWriter.randomProto3(60, true);
+            case LARGE_SPARSE:
+                return ProtobufRandomWriter.randomProto3(10, true);
+            default:
+                return ProtobufRandomWriter.randomProto0();
+        }
+    }
+
     public static String protoToJsonString(MessageNano a) {
         Gson gson = new Gson();
         try {

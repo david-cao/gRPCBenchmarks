@@ -21,16 +21,19 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ProtobufBenchmarksActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    List<CardView> cardViews;
+    private static final Logger logger = Logger.getLogger(ProtobufBenchmarksActivity.class.getName());
 
+    private List<CardView> cardViews;
     private Button mBenchmarkButton;
     private CheckBox mCheckBox;
 
     private MessageLite sharedMessage;
     private String sharedJson;
-    private int selected = 0;
+    private ProtoEnum selectedEnum = ProtoEnum.SMALL_REQUEST;
     private int tasksRunning = 0;
     private boolean useGzip = false;
 
@@ -44,10 +47,9 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
 
         // set up spinner
         Spinner mSpinner = (Spinner) findViewById(R.id.protobuf_benchmarks_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.protobuf_benchmarks_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinner.setAdapter(adapter);
+        ArrayAdapter<ProtoEnum> protoAdapter = new ArrayAdapter<ProtoEnum>(this,
+                android.R.layout.simple_spinner_dropdown_item, ProtoEnum.values());
+        mSpinner.setAdapter(protoAdapter);
         mSpinner.setOnItemSelectedListener(this);
 
         // set up benchmark cards
@@ -81,7 +83,6 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("start benchmark here");
                     startBenchmark(cv, b);
                 }
             });
@@ -92,39 +93,10 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
     }
 
     public void beginAllBenchmarks(View v) {
-        System.out.println("Beginning protobuf benchmarks");
-
         if (tasksRunning == 0) {
-            switch (selected) {
-                case 0:
-                    sharedMessage = ProtobufRandomWriter.randomProto0();
-                    sharedJson = ProtobufRandomWriter.protoToJsonString0(sharedMessage);
-                    break;
-                case 1:
-                    sharedMessage = ProtobufRandomWriter.randomProto1();
-                    sharedJson = ProtobufRandomWriter.protoToJsonString1(sharedMessage);
-                    break;
-                case 2:
-                    sharedMessage = ProtobufRandomWriter.randomProto2();
-                    sharedJson = ProtobufRandomWriter.protoToJsonString2(sharedMessage);
-                    break;
-                case 3:
-                    sharedMessage = ProtobufRandomWriter.randomProto3(60, false);
-                    sharedJson = ProtobufRandomWriter.protoToJsonString3(sharedMessage);
-                    break;
-                case 4:
-                    sharedMessage = ProtobufRandomWriter.randomProto3(60, true);
-                    sharedJson = ProtobufRandomWriter.protoToJsonString3(sharedMessage);
-                    break;
-                case 5:
-                    sharedMessage = ProtobufRandomWriter.randomProto3(10, true);
-                    sharedJson = ProtobufRandomWriter.protoToJsonString3(sharedMessage);
-                    break;
-                default:
-                    sharedMessage = ProtobufRandomWriter.randomProto0();
-                    sharedJson = ProtobufRandomWriter.protoToJsonString0(sharedMessage);
-                    break;
-            }
+            sharedMessage = ProtobufRandomWriter.randomProto(selectedEnum);
+            sharedJson = ProtobufRandomWriter.protoToJsonString(selectedEnum, sharedMessage);
+
             mBenchmarkButton.setEnabled(false);
             mBenchmarkButton.setText(R.string.allBenchmarksButtonDisabled);
             for (CardView cv : cardViews) {
@@ -144,9 +116,9 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
 
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
-        selected = pos;
+        selectedEnum = (ProtoEnum) parent.getSelectedItem();
         // prevent gzip for small request, strange bug where GZIP fails to decompress correctly
-        if (selected == 0) {
+        if (selectedEnum == ProtoEnum.SMALL_REQUEST) {
             mCheckBox.setChecked(false);
         }
     }
@@ -164,8 +136,8 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
 
         @Override
         protected void onPreExecute() {
-            // prevent gzip for small request, strange bug where GZIP fails to decompress correctly
-            if (selected == 0) {
+            // again, prevent gzip for small request
+            if (selectedEnum == ProtoEnum.SMALL_REQUEST) {
                 mCheckBox.setChecked(false);
             }
 
@@ -187,51 +159,18 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
                     message = sharedMessage;
                     jsonString = sharedJson;
                 } else {
-                    switch (selected) {
-                        case 0:
-                            message = ProtobufRandomWriter.randomProto0();
-                            jsonString = ProtobufRandomWriter.protoToJsonString0(message);
-                            break;
-                        case 1:
-                            message = ProtobufRandomWriter.randomProto1();
-                            jsonString = ProtobufRandomWriter.protoToJsonString1(message);
-                            break;
-                        case 2:
-                            message = ProtobufRandomWriter.randomProto2();
-                            jsonString = ProtobufRandomWriter.protoToJsonString2(message);
-                            break;
-                        case 3:
-                            message = ProtobufRandomWriter.randomProto3(60, false);
-                            jsonString = ProtobufRandomWriter.protoToJsonString3(message);
-                            break;
-                        case 4:
-                            message = ProtobufRandomWriter.randomProto3(60, true);
-                            jsonString = ProtobufRandomWriter.protoToJsonString3(message);
-                            break;
-                        case 5:
-                            message = ProtobufRandomWriter.randomProto3(10, true);
-                            jsonString = ProtobufRandomWriter.protoToJsonString3(message);
-                            break;
-                        default:
-                            message = ProtobufRandomWriter.randomProto0();
-                            jsonString = ProtobufRandomWriter.protoToJsonString0(message);
-                            break;
-                    }
+                    message = ProtobufRandomWriter.randomProto(selectedEnum);
+                    jsonString = ProtobufRandomWriter.protoToJsonString(selectedEnum, message);
                 }
 
                 BenchmarkResult res = b.run(message, jsonString, useGzip);
 
-                System.out.println(res.toString());
+                logger.log(Level.INFO, res.toString());
                 return res;
             } catch (Exception e) {
-                System.out.println("Exception while running benchmarks: " + e);
+                logger.log(Level.WARNING, "Exception while running benchmarks: " + e);
             }
             return null;
-        }
-
-        @Override
-        protected void onCancelled() {
-            System.out.println("onCancelled called");
         }
 
         @Override

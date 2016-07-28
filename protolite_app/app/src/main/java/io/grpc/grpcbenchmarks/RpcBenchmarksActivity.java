@@ -20,10 +20,13 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RpcBenchmarksActivity extends AppCompatActivity {
-    List<CardView> cardViews;
-    List<RpcBenchmark> benchmarks;
+    private static final Logger logger = Logger.getLogger(RpcBenchmarksActivity.class.getName());
+
+    private List<CardView> cardViews;
     private int tasksRunning = 0;
 
     private Button mBenchmarkButton;
@@ -52,7 +55,7 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
     }
 
     private void initializeBenchmarkCards() {
-        benchmarks = new ArrayList<>();
+        List<RpcBenchmark> benchmarks = new ArrayList<>();
         benchmarks.add(new RpcBenchmark("gRPC benchmarks", "", 0));
         benchmarks.add(new RpcBenchmark("HTTP JSON benchmarks", "", 1));
 
@@ -73,7 +76,6 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("start benchmark here");
                     startBenchmark(cv, b);
                 }
             });
@@ -124,7 +126,6 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... args) {
-            System.out.println("PING HERE");
             try {
                 Process p = Runtime.getRuntime().exec(new String[]{"ping", "-c", "4", args[0]});
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -132,18 +133,16 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
                 String s;
                 int count = 0;
                 while ((s = stdInput.readLine()) != null) {
-                    System.out.println(s);
                     count++;
                     // 4 + 5 to get the last line
                     if (count == 9) {
-                        System.out.println("done pinging");
                         return s.trim();
                     }
                 }
             } catch (Exception e) {
-                System.out.println("failed to ping");
+                logger.log(Level.WARNING, "Failed to ping " + args[0]);
             }
-            return "Failed to ping host.";
+            return "Failed to ping host, is server running/reachable?";
         }
 
         @Override
@@ -178,7 +177,7 @@ public class RpcBenchmarksActivity extends AppCompatActivity {
                 boolean useOkHttp = Boolean.parseBoolean(args[3]);
                 return b.run(useOkHttp, args[0], args[1], args[2]);
             } catch (Exception e) {
-                System.out.println("Exception while running benchmarks: " + e);
+                logger.log(Level.WARNING, "Exception while running benchmarks: " + e);
             }
             return null;
         }

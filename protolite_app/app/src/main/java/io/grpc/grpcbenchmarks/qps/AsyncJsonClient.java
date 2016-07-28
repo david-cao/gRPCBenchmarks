@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
 import io.grpc.grpcbenchmarks.RpcBenchmarkResult;
@@ -32,6 +34,7 @@ import io.grpc.grpcbenchmarks.RpcBenchmarkResult;
  * Created by davidcao on 6/22/16.
  */
 public class AsyncJsonClient {
+    private static final Logger logger = Logger.getLogger(AsyncJsonClient.class.getName());
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final long DURATION = 60 * 1000000000L;
     private static final long WARMUP_DURATION = 10 * 1000000000L;
@@ -48,7 +51,7 @@ public class AsyncJsonClient {
         this.useGzip = useGzip;
     }
 
-    public RpcBenchmarkResult run(boolean useOkHttp) throws Exception {
+    public RpcBenchmarkResult run(boolean useOkHttp) throws IOException, JSONException {
         String simpleRequest = newJsonRequest();
 
         // System properties are not settable during runtime, but worth a try?
@@ -87,7 +90,7 @@ public class AsyncJsonClient {
     }
 
     private void warmUp(URL url, String simpleRequest, long duration, boolean okHttp)
-            throws Exception {
+            throws IOException {
         long warmupEndTime = System.nanoTime() + duration;
         if (okHttp) {
             doBenchmarksOkHttp(url, simpleRequest, warmupEndTime);
@@ -109,13 +112,10 @@ public class AsyncJsonClient {
         simpleRequest.put("type", 0);
         simpleRequest.put("responseSize", serverPayload);
 
-        System.out.println("JSON: " + simpleRequest.toString());
-
         return simpleRequest.toString();
     }
 
-    private Histogram doBenchmarks(URL url, String simpleRequest,
-                                   long endTime) throws Exception {
+    private Histogram doBenchmarks(URL url, String simpleRequest, long endTime) throws IOException {
         // TODO (davidcao): possibly some checks here if we ever have the need
         // for different types of calls (unlikely)
         Histogram histogram = new Histogram(HISTOGRAM_MAX_VALUE, HISTOGRAM_PRECISION);
@@ -126,44 +126,41 @@ public class AsyncJsonClient {
     }
 
 
-    private void doPosts(Histogram histogram, URL url, String payload, long endTime) {
-        try {
-            byte simpleRequest[] = payload.getBytes();
-            HttpURLConnection connection;
-            long lastCall = System.nanoTime();
+    private void doPosts(Histogram histogram, URL url, String payload, long endTime)
+            throws IOException {
+        byte simpleRequest[] = payload.getBytes();
+        HttpURLConnection connection;
+        long lastCall = System.nanoTime();
 
-            while (lastCall < endTime) {
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("POST");
+        while (lastCall < endTime) {
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
 
-                OutputStream out;
-                if (useGzip) {
-                    out = new GZIPOutputStream(connection.getOutputStream());
-                } else {
-                    connection.setFixedLengthStreamingMode(simpleRequest.length);
-                    out = new BufferedOutputStream(connection.getOutputStream());
-                }
-                out.write(simpleRequest);
-                out.close();
-
-                InputStream in = new BufferedInputStream(connection.getInputStream());
-                // read input to simulate actual use case, this also actually speeds up requests
-                IOUtils.toString(in);
-                in.close();
-
-                connection.disconnect();
-
-                long now = System.nanoTime();
-                histogram.recordValue((now - lastCall) / 1000);
-                lastCall = now;
+            OutputStream out;
+            if (useGzip) {
+                out = new GZIPOutputStream(connection.getOutputStream());
+            } else {
+                connection.setFixedLengthStreamingMode(simpleRequest.length);
+                out = new BufferedOutputStream(connection.getOutputStream());
             }
-        } catch (IOException e) {
-            System.out.println("IO EXCEPTION IN ASYNC: " + e);
+            out.write(simpleRequest);
+            out.close();
+
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+            // read input to simulate actual use case, this also actually speeds up requests
+            IOUtils.toString(in);
+            in.close();
+
+            connection.disconnect();
+
+            long now = System.nanoTime();
+            histogram.recordValue((now - lastCall) / 1000);
+            lastCall = now;
         }
     }
 
-    private Histogram doBenchmarksOkHttp(URL url, String simpleRequest,
-                                               long endTime) throws Exception {
+    private Histogram doBenchmarksOkHttp(URL url, String simpleRequest, long endTime)
+            throws IOException {
         OkHttpClient client = new OkHttpClient();
         RequestBody body;
 
@@ -225,7 +222,7 @@ public class AsyncJsonClient {
                 .append("Maximum Latency (in micros):    ")
                 .append(latencyMax).append('\n')
                 .append("QPS:                            ").append(queriesPerSecond).append('\n');
-        System.out.println(values);
+        logger.log(Level.INFO, values.toString());
     }
 
 }

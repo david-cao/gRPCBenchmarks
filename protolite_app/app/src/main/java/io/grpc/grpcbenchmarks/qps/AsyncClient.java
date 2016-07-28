@@ -60,12 +60,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * QPS Client using the non-blocking API.
  */
 public class AsyncClient {
-
+    private static final Logger logger = Logger.getLogger(AsyncClient.class.getName());
     private final ClientConfiguration config;
 
     public AsyncClient(ClientConfiguration config) {
@@ -314,7 +316,7 @@ public class AsyncClient {
                 .append("99.9%ile Latency (in micros):   ").append(latency999).append('\n')
                 .append("Maximum Latency (in micros):    ").append(latencyMax).append('\n')
                 .append("QPS:                            ").append(queriesPerSecond).append('\n');
-        System.out.println(values);
+        logger.log(Level.INFO, values.toString());
     }
 
     private static void shutdown(List<ManagedChannel> channels) {

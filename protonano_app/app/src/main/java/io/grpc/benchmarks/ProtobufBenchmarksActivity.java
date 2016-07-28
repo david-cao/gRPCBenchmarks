@@ -28,8 +28,7 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
     private CheckBox mCheckBox;
 
     private MessageNano sharedMessage;
-
-    private int selected = 0;
+    private ProtoEnum selectedEnum = ProtoEnum.SMALL_REQUEST;
     private int tasksRunning = 0;
     private boolean useGzip = false;
 
@@ -43,10 +42,9 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
 
         // set up spinner
         Spinner mSpinner = (Spinner) findViewById(R.id.protobuf_benchmarks_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.protobuf_benchmarks_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinner.setAdapter(adapter);
+        ArrayAdapter<ProtoEnum> protoAdapter = new ArrayAdapter<ProtoEnum>(this,
+                android.R.layout.simple_spinner_dropdown_item, ProtoEnum.values());
+        mSpinner.setAdapter(protoAdapter);
         mSpinner.setOnItemSelectedListener(this);
 
         // set up benchmark cards
@@ -87,32 +85,9 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
     }
 
     public void beginAllBenchmarks(View v) {
-        System.out.println("Beginning protobuf benchmarks");
-
         if (tasksRunning == 0) {
-            switch (selected) {
-                case 0:
-                    sharedMessage = ProtobufRandomWriter.randomProto0();
-                    break;
-                case 1:
-                    sharedMessage = ProtobufRandomWriter.randomProto1();
-                    break;
-                case 2:
-                    sharedMessage = ProtobufRandomWriter.randomProto2();
-                    break;
-                case 3:
-                    sharedMessage = ProtobufRandomWriter.randomProto3(60, false);
-                    break;
-                case 4:
-                    sharedMessage = ProtobufRandomWriter.randomProto3(60, true);
-                    break;
-                case 5:
-                    sharedMessage = ProtobufRandomWriter.randomProto3(10, true);
-                    break;
-                default:
-                    sharedMessage = ProtobufRandomWriter.randomProto0();
-                    break;
-            }
+            sharedMessage = ProtobufRandomWriter.randomProto(selectedEnum);
+
             mBenchmarkButton.setEnabled(false);
             mBenchmarkButton.setText(R.string.allBenchmarksButtonDisabled);
             for (CardView cv: cardViews) {
@@ -129,46 +104,16 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
     // OnItemSelectedListener
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
-        System.out.println("picked " + pos);
-        selected = pos;
+        selectedEnum = (ProtoEnum) parent.getSelectedItem();
+        // weird bug where small message decompresses incorrectly for gzip
+        if (selectedEnum == ProtoEnum.SMALL_REQUEST) {
+            mCheckBox.setChecked(false);
+        }
     }
 
     public void onNothingSelected(AdapterView<?> parent) {}
 
-    private class Benchmark {
-        String title;
-        String description;
-        int methodNumber;
-
-        Benchmark(String title, String description, int methodNumber) {
-            this.title = title;
-            this.description = description;
-            this.methodNumber = methodNumber;
-        }
-
-        public BenchmarkResult run(MessageNano message, String jsonString, boolean useGzip)
-                throws Exception
-        {
-            switch (methodNumber) {
-                case 0:
-                    return ProtobufBenchmarker.serializeProtobufToByteArray(message);
-                case 1:
-                    return ProtobufBenchmarker.serializeProtobufToByteBuffer(message);
-                case 2:
-                    return ProtobufBenchmarker.deserializeProtobufFromByteArray(message);
-                case 3:
-                    return ProtobufBenchmarker.serializeJsonToByteArray(jsonString, useGzip);
-                case 4:
-                    return ProtobufBenchmarker.deserializeJsonfromByteArray(jsonString, useGzip);
-                default:
-                    return ProtobufBenchmarker.serializeProtobufToByteArray(message);
-            }
-        }
-    }
-
-    //TODO: Expand into multiple
     private class BenchmarkAsyncTask extends AsyncTask<Integer, Integer, BenchmarkResult> {
-
         CardView cv;
         Benchmark b;
 
@@ -179,6 +124,11 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
 
         @Override
         protected void onPreExecute() {
+            // again dont gzip for small request
+            if (selectedEnum == ProtoEnum.SMALL_REQUEST) {
+                mCheckBox.setChecked(false);
+            }
+
             useGzip = mCheckBox.isChecked();
             tasksRunning++;
             mBenchmarkButton.setEnabled(false);
@@ -195,39 +145,12 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
                 String jsonString;
 
                 if (sharedMessage != null) {
-                    System.out.println("Using shared message");
                     message = sharedMessage;
                 } else {
-                    switch (selected) {
-                        case 0:
-                            message = ProtobufRandomWriter.randomProto0();
-                            break;
-                        case 1:
-                            message = ProtobufRandomWriter.randomProto1();
-                            break;
-                        case 2:
-                            message = ProtobufRandomWriter.randomProto2();
-                            break;
-                        case 3:
-                            message = ProtobufRandomWriter.randomProto3(60, false);
-                            break;
-                        case 4:
-                            message = ProtobufRandomWriter.randomProto3(60, true);
-                            break;
-                        case 5:
-                            message = ProtobufRandomWriter.randomProto3(10, true);
-                            break;
-                        default:
-                            message = ProtobufRandomWriter.randomProto0();
-                            break;
-                    }
+                    message = ProtobufRandomWriter.randomProto(selectedEnum);
                 }
                 jsonString = ProtobufRandomWriter.protoToJsonString(message);
-
-                BenchmarkResult res = b.run(message, jsonString, useGzip);
-
-                System.out.println(res.toString());
-                return res;
+                return b.run(message, jsonString, useGzip);
             } catch (Exception e) {
                 System.out.println("Exception while running benchmarks: " + e);
             }

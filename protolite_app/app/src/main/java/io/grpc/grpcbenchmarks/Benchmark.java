@@ -8,6 +8,7 @@ import com.google.protobuf.MessageLite;
 public class Benchmark {
     String title;
     String description;
+    MethodEnum methodEnum;
     int methodNumber;
 
     Benchmark(String title, String description, int methodNumber) {
@@ -17,25 +18,26 @@ public class Benchmark {
     }
 
     public BenchmarkResult run(MessageLite msg, String json, boolean useGzip) throws Exception {
-        switch (methodNumber) {
-            case 0:
+        switch (methodEnum) {
+            case SERIAL_CODED_OUTPUT:
                 return ProtobufBenchmarker.serializeProtobufToByteArray(msg);
-            case 1:
+            case SERIAL_BYTE_ARRAY_OUTPUT_STREAM:
                 return ProtobufBenchmarker.serializeProtobufToCodedOutputStream(msg);
-            case 2:
+            case SERIAL_BYTE_ARRAY:
                 return ProtobufBenchmarker.serializeProtobufToByteArrayOutputStream(msg);
-            case 3:
+            case DESERIAL_CODED_INPUT:
                 return ProtobufBenchmarker.deserializeProtobufFromByteArray(msg);
-            case 4:
+            case DESERIAL_BYTE_ARRAY_INPUT:
                 return ProtobufBenchmarker.deserializeProtobufFromCodedInputStream(msg);
-            case 5:
+            case DESERIAL_BYTE_ARRAY:
                 return ProtobufBenchmarker.deserializeProtobufFromByteArrayInputStream(msg);
-            case 6:
+            case SERIAL_JSON_BYTE_ARRAY:
                 return ProtobufBenchmarker.serializeJsonToByteArray(json, useGzip);
-            case 7:
+            case DESERIAL_JSON_BYTE_ARRAY:
                 return ProtobufBenchmarker.deserializeJsonfromByteArray(json, useGzip);
             default:
-                throw new Exception("Invalid method number. Did you set it correctly?");
+                throw new IllegalArgumentException("Invalid method type. " +
+                        "Did you set it correctly?");
         }
     }
 }
