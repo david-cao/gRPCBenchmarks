@@ -7,12 +7,10 @@ import com.google.protobuf.nano.MessageNano;
  */
 public class Benchmark {
     String title;
-    String description;
     int methodNumber;
 
-    Benchmark(String title, String description, int methodNumber) {
+    Benchmark(String title, int methodNumber) {
         this.title = title;
-        this.description = description;
         this.methodNumber = methodNumber;
     }
 

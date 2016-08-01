@@ -7,14 +7,11 @@ import com.google.protobuf.MessageLite;
  */
 public class Benchmark {
     String title;
-    String description;
     MethodEnum methodEnum;
-    int methodNumber;
 
-    Benchmark(String title, String description, int methodNumber) {
+    Benchmark(String title, MethodEnum methodEnum) {
         this.title = title;
-        this.description = description;
-        this.methodNumber = methodNumber;
+        this.methodEnum = methodEnum;
     }
 
     public BenchmarkResult run(MessageLite msg, String json, boolean useGzip) throws Exception {

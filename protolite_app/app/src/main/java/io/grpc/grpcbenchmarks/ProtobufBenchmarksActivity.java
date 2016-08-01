@@ -58,14 +58,22 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
 
     private void initializeBenchmarkCards() {
         List<Benchmark> benchmarks = new ArrayList<>();
-        benchmarks.add(new Benchmark("Serialize protobuf to byte array", "", 0));
-        benchmarks.add(new Benchmark("Serialize protobuf to CodedOutputStream", "", 1));
-        benchmarks.add(new Benchmark("Serialize protobuf to ByteArrayOutputStream", "", 2));
-        benchmarks.add(new Benchmark("Deserialize protobuf from byte array", "", 3));
-        benchmarks.add(new Benchmark("Deserialize protobuf from CodedInputStream", "", 4));
-        benchmarks.add(new Benchmark("Deserialize protobuf from ByteArrayInputStream", "", 5));
-        benchmarks.add(new Benchmark("Serialize JSON to byte array", "", 6));
-        benchmarks.add(new Benchmark("Deserialize JSON from byte array", "", 7));
+        benchmarks.add(new Benchmark("Serialize protobuf to byte array",
+                MethodEnum.SERIAL_BYTE_ARRAY));
+        benchmarks.add(new Benchmark("Serialize protobuf to CodedOutputStream",
+                MethodEnum.SERIAL_CODED_OUTPUT));
+        benchmarks.add(new Benchmark("Serialize protobuf to ByteArrayOutputStream",
+                MethodEnum.SERIAL_BYTE_ARRAY_OUTPUT_STREAM));
+        benchmarks.add(new Benchmark("Deserialize protobuf from byte array",
+                MethodEnum.DESERIAL_BYTE_ARRAY));
+        benchmarks.add(new Benchmark("Deserialize protobuf from CodedInputStream",
+                MethodEnum.DESERIAL_CODED_INPUT));
+        benchmarks.add(new Benchmark("Deserialize protobuf from ByteArrayInputStream",
+                MethodEnum.DESERIAL_BYTE_ARRAY_INPUT));
+        benchmarks.add(new Benchmark("Serialize JSON to byte array",
+                MethodEnum.SERIAL_JSON_BYTE_ARRAY));
+        benchmarks.add(new Benchmark("Deserialize JSON from byte array",
+                MethodEnum.DESERIAL_JSON_BYTE_ARRAY));
 
         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
         LinearLayout l = (LinearLayout) findViewById(R.id.protobuf_benchmark_cardlayoutlinear);
@@ -76,10 +84,8 @@ public class ProtobufBenchmarksActivity extends AppCompatActivity implements Ada
             cv.setCardBackgroundColor(ContextCompat.getColor(getApplicationContext(),
                     R.color.cardview_light_background));
             TextView tv = (TextView) cv.findViewById(R.id.protobuf_benchmark_title);
-            TextView descrip = (TextView) cv.findViewById(R.id.protobuf_benchmark_description);
             ImageButton button = (ImageButton) cv.findViewById(R.id.protobuf_benchmark_start);
             tv.setText(b.title);
-            descrip.setText(b.description);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

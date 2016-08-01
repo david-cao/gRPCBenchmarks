@@ -53,11 +53,11 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
 
     private void initializeBenchmarkCards() {
         List<Benchmark> benchmarks = new ArrayList<>();
-        benchmarks.add(new Benchmark("Serialize to byte array", "description", 0));
-        benchmarks.add(new Benchmark("Serialize to CodedOutputByteBufferNano", "description", 1));
-        benchmarks.add(new Benchmark("Deserialize from byte array", "description", 2));
-        benchmarks.add(new Benchmark("JSON serialize to byte array", "description", 3));
-        benchmarks.add(new Benchmark("JSON deserialize from byte array", "description", 4));
+        benchmarks.add(new Benchmark("Serialize to byte array", 0));
+        benchmarks.add(new Benchmark("Serialize to CodedOutputByteBufferNano", 1));
+        benchmarks.add(new Benchmark("Deserialize from byte array", 2));
+        benchmarks.add(new Benchmark("JSON serialize to byte array", 3));
+        benchmarks.add(new Benchmark("JSON deserialize from byte array", 4));
 
         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
         LinearLayout l = (LinearLayout) findViewById(R.id.protobuf_benchmark_cardlayoutlinear);
@@ -68,10 +68,8 @@ public class ProtobufBenchmarksActivity extends Activity implements AdapterView.
             cv.setCardBackgroundColor(ContextCompat.getColor(getApplicationContext(),
                     R.color.cardview_light_background));
             TextView tv = (TextView) cv.findViewById(R.id.protobuf_benchmark_title);
-            TextView descrip = (TextView) cv.findViewById(R.id.protobuf_benchmark_description);
             ImageButton button = (ImageButton) cv.findViewById(R.id.protobuf_benchmark_start);
             tv.setText(b.title);
-            descrip.setText(b.description);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
